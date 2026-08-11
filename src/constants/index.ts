@@ -1,5 +1,5 @@
 export const DEFAULT_TIME_ZONE = 'America/New_York'
-export const DEFAULT_WELCOME_MESSAGE = 'Hola, soy Clara, tu asistente medica virtual. En que te ayudo hoy?'
+export const DEFAULT_WELCOME_MESSAGE = 'Hello, I am DriveIA, your mobility assistant. How can I help today?'
 export const DEFAULT_WIDGET_WIDTH = 420
 export const DEFAULT_WIDGET_HEIGHT = 680
 export const DEFAULT_APPOINTMENT_SLOT_MINUTES = 30

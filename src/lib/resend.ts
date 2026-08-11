@@ -12,7 +12,7 @@ export function getResendClient() {
 }
 
 export function getFromEmail() {
-  return process.env.RESEND_FROM_EMAIL || 'Clara <noreply@example.com>'
+  return process.env.RESEND_FROM_EMAIL || 'DriveIA <noreply@example.com>'
 }
 
 export async function sendEmail(options: { to: string | string[]; subject: string; html: string; text?: string }) {

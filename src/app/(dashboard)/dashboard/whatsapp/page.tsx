@@ -34,7 +34,7 @@ export default async function WhatsappPage() {
       <SectionHeading
         eyebrow={<SectionEyebrow>Setup</SectionEyebrow>}
         title="WhatsApp"
-        description="Connect Evolution API so the same clinic assistant can answer WhatsApp, qualify patients and book appointments."
+        description="Connect Evolution API so the same DriveIA assistant can answer WhatsApp, qualify leads and book reservations."
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.18fr)_minmax(320px,0.82fr)]">
@@ -63,7 +63,7 @@ export default async function WhatsappPage() {
               <div>
                 <div className="font-semibold text-[var(--text-strong)]">Same assistant, new channel</div>
                 <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-                  WhatsApp uses the same clinic tools, FAQs and appointment logic as the voice flow.
+                  WhatsApp uses the same DriveIA tools, FAQs and reservation logic as the voice flow.
                 </p>
               </div>
             </div>
@@ -88,8 +88,7 @@ export default async function WhatsappPage() {
               <div>
                 <div className="font-semibold text-[var(--text-strong)]">Bookings stay tracked</div>
                 <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-                  Appointments created from WhatsApp are stored with source <code>whatsapp</code> so reporting stays
-                  clean.
+                  Reservations created from WhatsApp are stored with source <code>whatsapp</code> so reporting stays clean.
                 </p>
               </div>
             </div>
@@ -101,7 +100,7 @@ export default async function WhatsappPage() {
               <div>
                 <div className="font-semibold text-[var(--text-strong)]">One channel, same knowledge base</div>
                 <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
-                  The assistant can search services, FAQ entries, appointments and payments before responding.
+                  The assistant can search services, FAQ entries, reservations and payments before responding.
                 </p>
               </div>
             </div>

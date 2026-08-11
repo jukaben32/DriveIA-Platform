@@ -70,10 +70,10 @@ const FONT_LINKS: Record<string, string> = {
 }
 
 const DEFAULT_HIGHLIGHTS = [
-  'Same-week appointments',
-  'Telehealth available',
-  'Insurance-friendly care',
-  'Compassionate follow-up',
+  'Same-week reservations',
+  'Test drives available',
+  'Fleet-friendly service',
+  'Fast follow-up',
 ]
 
 const SERVICE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -222,7 +222,7 @@ export function WebsiteTemplateRenderer({
             <div>
               <p className="text-sm font-extrabold tracking-[-0.03em]">{website.siteTitle || businessName}</p>
               <p className="text-[11px] uppercase tracking-[0.26em]" style={{ color: style.subtext }}>
-                {website.aboutTitle || 'Healthcare site'}
+                {website.aboutTitle || 'Mobility site'}
               </p>
             </div>
           </div>
@@ -262,7 +262,7 @@ export function WebsiteTemplateRenderer({
                 style={{ borderColor: style.border, color: website.primaryColor, backgroundColor: style.cardBg }}
               >
                 <SparkleBadge />
-                Modern patient experience
+                Modern mobility experience
               </span>
               <h1 className="mt-6 max-w-3xl text-4xl font-black tracking-[-0.06em] sm:text-5xl xl:text-6xl">
                 {heroTitle}
@@ -291,7 +291,7 @@ export function WebsiteTemplateRenderer({
 
               <div className="mt-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <StatCard label="Years experience" value={String(website.yearsExperience ?? 0)} accent={website.primaryColor} />
-                <StatCard label="Patients served" value={String(website.patientsServed ?? 0)} accent={website.primaryColor} />
+                <StatCard label="Vehicles served" value={String(website.patientsServed ?? 0)} accent={website.primaryColor} />
                 <StatCard
                   label="Satisfaction"
                   value={website.satisfactionPct != null ? `${Math.round(website.satisfactionPct)}%` : '—'}
@@ -361,8 +361,8 @@ export function WebsiteTemplateRenderer({
           <SectionBlock id="services">
             <SectionTitle
               eyebrow="Services"
-              title="How we help patients"
-              description="The same clean, high-trust layout the reference uses, but tailored to clinical care and patient booking."
+              title="How we help customers"
+              description="The same clean, high-trust layout the reference uses, but tailored to vehicle sales, rentals, and booking."
             />
             <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {services.map((service) => {
@@ -410,7 +410,7 @@ export function WebsiteTemplateRenderer({
             <div>
               <SectionTitle
                 eyebrow="About"
-                title={website.aboutTitle || 'About the clinic'}
+                title={website.aboutTitle || 'About the business'}
                 description={website.aboutStory || website.siteDescription}
               />
               <div className="mt-8 space-y-3">
@@ -483,7 +483,7 @@ export function WebsiteTemplateRenderer({
           <SectionBlock bg={style.cardBg}>
             <SectionTitle
               eyebrow="Testimonials"
-              title="What patients say"
+                title="What customers say"
               description="Short quotes and ratings add trust, just like in the reference design."
               center
             />
@@ -591,7 +591,7 @@ export function WebsiteTemplateRenderer({
 
       <footer className="border-t px-4 py-8 sm:px-6 lg:px-8" style={{ borderColor: style.border }}>
         <div className="mx-auto flex max-w-7xl flex-col gap-2 text-center text-xs sm:text-sm">
-          <p className="font-semibold">{website.footerTagline || 'Your trusted healthcare partner.'}</p>
+          <p className="font-semibold">{website.footerTagline || 'Your trusted mobility partner.'}</p>
           <p style={{ color: style.subtext }}>{website.footerCopyright || `Copyright ${new Date().getFullYear()} ${businessName}`}</p>
         </div>
       </footer>

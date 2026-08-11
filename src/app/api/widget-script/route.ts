@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   const greetingOverride = dataset.greeting || '';
 
   if (!businessSlug) {
-    console.warn('Clara widget requires a businessSlug parameter.');
+    console.warn('DriveIA widget requires a businessSlug parameter.');
     return;
   }
 
@@ -73,27 +73,27 @@ export async function GET(request: Request) {
   root.style.setProperty('--clara-secondary', secondaryColor);
 
   root.innerHTML = [
-    '<button type="button" class="clara-widget-launcher" aria-label="Open Clara assistant">',
+    '<button type="button" class="clara-widget-launcher" aria-label="Open DriveIA assistant">',
     '  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12a6 6 0 1 1 12 0c0 3.3-2.3 6.1-5.4 6.9L12 21l-.6-2.1A7 7 0 0 1 6 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     '</button>',
     '<div class="clara-widget-panel" hidden aria-hidden="true">',
     '  <div class="clara-widget-panel-header">',
     '    <div>',
-    '      <p class="clara-widget-panel-title">Clara</p>',
-    '      <p class="clara-widget-panel-subtitle">Loading clinic assistant...</p>',
+    '      <p class="clara-widget-panel-title">DriveIA</p>',
+    '      <p class="clara-widget-panel-subtitle">Loading mobility assistant...</p>',
     '    </div>',
     '    <button type="button" class="clara-widget-close" aria-label="Close widget">&times;</button>',
     '  </div>',
     '  <div class="clara-widget-body">',
     '    <div class="clara-widget-lede">',
-    '      <div class="clara-widget-pill"><i></i>AI reception</div>',
+    '      <div class="clara-widget-pill"><i></i>AI mobility</div>',
     '      <h4 data-widget-title>Welcome</h4>',
     '      <p data-widget-greeting>Loading...</p>',
     '    </div>',
     '    <div class="clara-widget-actions">',
     '      <button type="button" class="clara-widget-action" data-action="book">',
-    '        <strong>Book an appointment</strong>',
-    '        <span>Open the scheduling portal with the selected clinic services.</span>',
+    '        <strong>Book a vehicle</strong>',
+    '        <span>Open the reservation portal with the selected vehicle services.</span>',
     '      </button>',
     '      <button type="button" class="clara-widget-action" data-action="chat">',
     '        <strong>Chat with the assistant</strong>',
@@ -101,7 +101,7 @@ export async function GET(request: Request) {
     '      </button>',
     '      <button type="button" class="clara-widget-action" data-action="callback">',
     '        <strong>Request a callback</strong>',
-    '        <span>Leave your details for follow-up by the clinic team.</span>',
+    '        <span>Leave your details for follow-up by the mobility team.</span>',
     '      </button>',
     '    </div>',
     '    <div class="clara-widget-chat" data-chatbox>',
@@ -109,8 +109,8 @@ export async function GET(request: Request) {
     '      <button type="button" class="clara-widget-send">Send</button>',
     '    </div>',
     '    <div class="clara-widget-footer">',
-    '      <span data-widget-source>Connected to your clinic website</span>',
-    '      <span>Powered by Clara</span>',
+    '      <span data-widget-source>Connected to your vehicle website</span>',
+    '      <span>Powered by DriveIA</span>',
     '    </div>',
     '  </div>',
     '</div>',
@@ -139,13 +139,13 @@ export async function GET(request: Request) {
   }
 
   function updateCopy(widget) {
-    const widgetName = widget && widget.name ? widget.name : 'Clara';
+    const widgetName = widget && widget.name ? widget.name : 'DriveIA';
     const agentName = widget && widget.agentName ? widget.agentName : widgetName;
     const resolvedGreeting = greetingOverride || (widget && widget.greetingMessage) || ('Hello from ' + agentName + '. How can we help today?');
 
     if (title) title.textContent = widgetName;
     if (greeting) greeting.textContent = resolvedGreeting;
-    if (sourceLabel) sourceLabel.textContent = (widget && widget.businessName ? widget.businessName : businessSlug) + ' • ' + (widget && widget.agentName ? widget.agentName : 'AI assistant');
+    if (sourceLabel) sourceLabel.textContent = (widget && widget.businessName ? widget.businessName : businessSlug) + ' • ' + (widget && widget.agentName ? widget.agentName : 'AI mobility assistant');
     if (subtitle) subtitle.textContent = resolvedGreeting;
     root.setAttribute('data-theme', (widget && widget.theme ? widget.theme : safeTheme) === 'dark' ? 'dark' : 'light');
     root.style.setProperty('--clara-primary', (widget && widget.primaryColor) || primaryColor);

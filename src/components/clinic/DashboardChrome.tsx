@@ -42,17 +42,17 @@ type NavGroup = {
 }
 
 // The sidebar now mirrors the reference video more closely:
-// CLINICAL / SETUP / ACCOUNT, with the closest existing routes mapped in.
+// OPERATIONS / SETUP / ACCOUNT, with the closest existing routes mapped in.
 const navGroups: readonly NavGroup[] = [
   {
-    label: 'CLINICAL',
+    label: 'OPERATIONS',
     items: [
       { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
       { href: '/dashboard/analytics', label: 'Analytics', icon: LineChart },
-      { href: '/dashboard/conversations', label: 'Call Log', icon: PhoneCall },
-      { href: '/dashboard/appointments', label: 'Appointments', icon: CalendarDays },
+      { href: '/dashboard/conversations', label: 'Conversations', icon: PhoneCall },
+      { href: '/dashboard/appointments', label: 'Bookings', icon: CalendarDays },
       { href: '/dashboard/appointments/schedule', label: 'Schedule', icon: CalendarRange },
-      { href: '/dashboard/patients', label: 'Patients', icon: Users },
+      { href: '/dashboard/patients', label: 'Customers', icon: Users },
       { href: '/dashboard/support', label: 'Support', icon: LifeBuoy },
     ],
   },
@@ -118,7 +118,7 @@ export function DashboardChrome({
               <div className="rounded-[18px] border border-white/10 bg-white/6 p-3.5 backdrop-blur-sm">
                 <BrandMark compact />
                 <div className="mt-2 text-[11px] leading-5 text-white/60">
-                  AI voice platform for clinics
+                  AI mobility platform for dealers and rent car teams
                 </div>
               </div>
 
@@ -171,7 +171,7 @@ export function DashboardChrome({
                   </span>
                 </div>
                 <p className="mt-2 text-xs leading-6 text-white/72">
-                  24/7 smart booking assistant active across widget, portal, and phone workflows.
+                  24/7 mobility assistant active across widget, portal, WhatsApp, and phone workflows.
                 </p>
               </div>
               <button
@@ -196,14 +196,14 @@ export function DashboardChrome({
             </button>
             <div className="mr-auto">
               <div className="font-display text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                Clinic workspace
+                DriveIA workspace
               </div>
               <h1 className="mt-1 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">{activeItem.label}</h1>
             </div>
 
             <div className="hidden min-w-[260px] flex-1 items-center gap-2 rounded-full border border-[var(--border-soft)] bg-white/82 px-4 py-2.5 lg:flex lg:max-w-sm">
               <Search className="h-4 w-4 shrink-0 text-[var(--text-muted)]" />
-              <span className="truncate text-sm text-[var(--text-muted)]">Search patients, appointments, or services...</span>
+              <span className="truncate text-sm text-[var(--text-muted)]">Search leads, bookings, vehicles, or services...</span>
             </div>
             <button
               type="button"

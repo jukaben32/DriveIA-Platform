@@ -68,48 +68,48 @@ import {
 type ClinicTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
 
 const upcomingAppointments = [
-  { name: 'Md Tajuddin', note: 'General Consultation', tone: 'teal' as const },
-  { name: 'Shakib', note: 'Follow Up Visit', tone: 'blue' as const },
-  { name: 'Just Funny', note: 'General Consultation', tone: 'amber' as const },
-  { name: 'Dault Hussain', note: 'General Consultation', tone: 'rose' as const },
-  { name: 'Amit', note: 'Follow Up Visit', tone: 'emerald' as const },
+  { name: 'Jordan Reyes', note: 'Vehicle reservation', tone: 'teal' as const },
+  { name: 'Mia Torres', note: 'Rental pickup', tone: 'blue' as const },
+  { name: 'Carlos Vega', note: 'Test drive', tone: 'amber' as const },
+  { name: 'Sofia Lopez', note: 'Vehicle reservation', tone: 'rose' as const },
+  { name: 'Daniel Ruiz', note: 'Fleet return', tone: 'emerald' as const },
 ]
 
 const features = [
   {
     icon: Bot,
-    title: 'AI Booking Assistant',
-    body: 'Clara answers patients naturally, books visits, collects details, and hands off to staff when needed.',
+    title: 'AI Lead Assistant',
+    body: 'DriveIA answers customers naturally, captures vehicle interest, books viewings, and hands off to staff when needed.',
     tone: 'teal' as const,
   },
   {
     icon: CalendarDays,
     title: 'Smart Calendar',
-    body: 'Drag, confirm, reschedule, and protect the clinic hours without leaving the dashboard.',
+    body: 'Drag, confirm, reschedule, and protect test drives, rentals, and pickup windows without leaving the dashboard.',
     tone: 'blue' as const,
   },
   {
     icon: NotebookText,
-    title: 'Patient CRM',
-    body: 'Keep patient history, notes, booking context, reminders, and portal access in one place.',
+    title: 'Customer CRM',
+    body: 'Keep lead history, vehicle preferences, booking context, reminders, and portal access in one place.',
     tone: 'emerald' as const,
   },
   {
     icon: Lock,
     title: 'Multi-Tenant Security',
-    body: 'Every clinic is isolated with row-level policies, scoped access, and audit friendly records.',
+    body: 'Every business is isolated with row-level policies, scoped access, and audit friendly records.',
     tone: 'rose' as const,
   },
   {
     icon: LineChart,
     title: 'Operations Analytics',
-    body: 'Track utilization, conversions, no-shows, and widget performance at a glance.',
+    body: 'Track leads, reservations, no-shows, and widget performance at a glance.',
     tone: 'amber' as const,
   },
   {
     icon: Wallet,
-    title: 'USDC Billing',
-    body: 'Record deposits, track tx hashes, and attach payments directly to appointments.',
+    title: 'Deposit Billing',
+    body: 'Record deposits, track tx hashes, and attach payments directly to reservations.',
     tone: 'teal' as const,
   },
 ] as const
@@ -117,65 +117,65 @@ const features = [
 const workflow = [
   {
     step: '01',
-    title: 'Set up the clinic',
-    body: 'Create the business profile, define services, staff, and availability in a few minutes.',
+    title: 'Set up the business',
+    body: 'Create the business profile, define vehicles, staff, and availability in a few minutes.',
     icon: Hospital,
   },
   {
     step: '02',
     title: 'Embed the widget',
-    body: 'Drop one script or iframe into the clinic website and let Clara start booking.',
+    body: 'Drop one script or iframe into the vehicle website and let DriveIA start converting leads.',
     icon: Globe2,
   },
   {
     step: '03',
-    title: 'Review the bookings',
-    body: 'Confirm appointments, manage callbacks, send reminders, and capture payments.',
+    title: 'Review the reservations',
+    body: 'Confirm reservations, manage callbacks, send reminders, and capture payments.',
     icon: CheckCircle2,
   },
 ] as const
 
 const testimonials = [
   {
-    quote: 'Our front desk feels like it gained another full-time receptionist overnight. The booking flow looks polished and the reminders are on point.',
-    author: 'Dr. Sarah Mitchell',
-    role: 'Family Practice',
+    quote: 'Our sales desk feels like it gained another full-time concierge overnight. The booking flow looks polished and the reminders are on point.',
+    author: 'Ana Delgado',
+    role: 'Dealer Principal',
   },
   {
-    quote: 'The widget feels natural for patients and the dashboard gives us exactly the operational clarity we wanted for a modern clinic.',
-    author: 'Dr. James Park',
-    role: 'Cardiology',
+    quote: 'The widget feels natural for shoppers and the dashboard gives us exactly the operational clarity we wanted for a modern dealership.',
+    author: 'Marcus Chen',
+    role: 'Sales Manager',
   },
   {
-    quote: 'Setup was fast, the calendar is easy to manage, and the portal gives patients the self-service experience we were missing.',
-    author: 'Dr. Maria Santos',
-    role: 'Dermatology',
+    quote: 'Setup was fast, the calendar is easy to manage, and the portal gives customers the self-service experience we were missing.',
+    author: 'Lucia Romero',
+    role: 'Rental Operations Lead',
   },
 ] as const
 
 const services = [
-  { name: 'General Consultation', duration: '30 min', price: '$90', tone: 'teal' as const },
-  { name: 'Follow Up Visit', duration: '15 min', price: '$45', tone: 'blue' as const },
-  { name: 'Cardiology Review', duration: '50 min', price: '$140', tone: 'rose' as const },
-  { name: 'Men\'s Premium', duration: '50 min', price: '$0', tone: 'emerald' as const },
+  { name: 'Vehicle Sales Inquiry', duration: '30 min', price: '$0', tone: 'teal' as const },
+  { name: 'Test Drive', duration: '45 min', price: '$0', tone: 'blue' as const },
+  { name: 'Short-Term Rental', duration: '50 min', price: '$0', tone: 'rose' as const },
+  { name: 'Fleet Consultation', duration: '50 min', price: '$0', tone: 'emerald' as const },
 ]
 
 const widgetSteps = [
   {
-    title: 'Choose a service',
-    detail: 'The assistant lists the clinic services with duration and pricing.',
+    title: 'Choose a vehicle or service',
+    detail: 'The assistant lists the available vehicles, rentals, and add-ons with duration and pricing.',
   },
   {
     title: 'Pick a date and time',
-    detail: 'Clara only shows slots that are open in the clinic schedule.',
+    detail: 'DriveIA only shows slots that are open in the business schedule.',
   },
   {
     title: 'Add your details',
-    detail: 'Patients enter their name, phone, and optional email in the conversation.',
+    detail: 'Customers enter their name, phone, and optional email in the conversation.',
   },
   {
     title: 'Confirm booking',
-    detail: 'The appointment is saved, confirmed, and the notification pipeline fires.',
+    detail: 'The reservation is saved, confirmed, and the notification pipeline fires.',
   },
 ]
 
@@ -188,19 +188,19 @@ const portalTimeline = [
 const marketingFaqs = [
   {
     q: 'How long does setup take?',
-    a: 'Most clinics are live with services, availability, and the AI voice agent configured in under a week.',
+    a: 'Most dealers and rent car businesses are live with vehicles, availability, and the AI voice agent configured in under a week.',
   },
   {
-    q: 'Does the AI agent replace my front desk?',
-    a: 'No — it complements it. Clara handles after-hours calls, demand spikes, and repetitive questions, then hands off to your team when needed.',
+    q: 'Does the AI agent replace my sales or rental team?',
+    a: 'No — it complements them. DriveIA handles after-hours calls, demand spikes, and repetitive questions, then hands off to your team when needed.',
   },
   {
-    q: 'Can I run more than one clinic from one account?',
-    a: 'Yes. Every location gets its own calendar, services, and dashboard, with row-level isolation between clinics.',
+    q: 'Can I run more than one location from one account?',
+    a: 'Yes. Every location gets its own calendar, vehicles, and dashboard, with row-level isolation between businesses.',
   },
   {
-    q: 'How is patient data protected?',
-    a: 'Encryption in transit and at rest, scoped role-based access, and audit-friendly records aligned with HIPAA-ready practices.',
+    q: 'How is customer data protected?',
+    a: 'Encryption in transit and at rest, scoped role-based access, and audit-friendly records aligned with modern SaaS practices.',
   },
   {
     q: 'Do I need to install anything?',
@@ -212,18 +212,18 @@ function heroPreview() {
   return (
     <div className="relative">
       <div className="plate-corners relative rounded-[34px] border border-[var(--border-soft)] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(246,239,230,0.9))] shadow-[0_28px_90px_-56px_rgba(15,33,41,0.48)]">
-        <BrowserFrame title="Clinic dashboard" subtitle="Live bookings, schedules, and patient operations">
+        <BrowserFrame title="DriveIA dashboard" subtitle="Live leads, reservations, and vehicle operations">
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
             <SurfaceCard className="p-5">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-muted)]">Live dashboard</div>
-                  <div className="mt-1 font-display text-xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">Good evening, Dr. Harrington</div>
+                  <div className="mt-1 font-display text-xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">Good evening, DriveIA team</div>
                 </div>
                 <StatusBadge tone="teal">Online</StatusBadge>
               </div>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <MetricCard label="Today" value="2" delta="Scheduled today" icon={CalendarDays} tone="teal" />
+                <MetricCard label="Today" value="2" delta="Reserved today" icon={CalendarDays} tone="teal" />
                 <MetricCard label="Upcoming" value="7" delta="Booked & confirmed" icon={Clock3} tone="blue" />
               </div>
             </SurfaceCard>
@@ -250,7 +250,7 @@ function heroPreview() {
       <div className="absolute -bottom-6 -left-6 hidden w-[220px] rounded-[24px] border border-[var(--border-soft)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(236,248,245,0.96))] p-4 shadow-[0_24px_70px_-48px_rgba(15,33,41,0.45)] sm:block">
         <div className="font-display text-[10px] font-semibold uppercase tracking-[0.22em]" style={{ color: 'var(--brand)' }}>Live</div>
         <div className="mt-1 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">12,400+</div>
-        <div className="text-xs text-[var(--text-muted)]">patients managed this month</div>
+        <div className="text-xs text-[var(--text-muted)]">leads managed this month</div>
       </div>
     </div>
   )

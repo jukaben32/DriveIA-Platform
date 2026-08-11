@@ -34,7 +34,7 @@ import { WebsiteTemplateRenderer } from './WebsiteTemplateRenderer'
 const TEMPLATE_CHOICES = [
   { id: 'serenity', name: 'Serenity', tagline: 'Soft gradients and calm trust' },
   { id: 'pulse', name: 'Pulse', tagline: 'Premium contrast and punchy CTA' },
-  { id: 'clarity', name: 'Clarity', tagline: 'Minimal, clean, and clinical' },
+  { id: 'clarity', name: 'Clarity', tagline: 'Minimal, clean, and modern' },
 ] as const
 
 const FONT_CHOICES = [
@@ -682,7 +682,7 @@ export function WebsiteEditor({
                   onChange={(e) => patchWebsite({ aboutStory: e.target.value })}
                   className="input-field w-full"
                   rows={4}
-                  placeholder="Tell the clinic story and how the team helps patients."
+                  placeholder="Tell the business story and how the team helps customers."
                 />
               </Field>
 
@@ -690,7 +690,7 @@ export function WebsiteEditor({
                 label="About photo"
                 url={website.aboutPhotoUrl}
                 busy={aboutBusy}
-                hint="This can be the doctor, clinic exterior, or office team."
+                hint="This can be the showroom, lot exterior, or team photo."
                 onPick={(file) => void handleAboutUpload(file)}
                 onClear={() => patchWebsite({ aboutPhotoUrl: null })}
               />
@@ -905,7 +905,7 @@ export function WebsiteEditor({
             </div>
           </SectionCard>
 
-          <SectionCard title="Testimonials" subtitle="Short patient quotes and star ratings." icon={Quote}>
+          <SectionCard title="Testimonials" subtitle="Short customer quotes and star ratings." icon={Quote}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-[var(--text-muted)]">{testimonials.length} testimonials</p>
               <button type="button" onClick={addTestimonial} className="btn-secondary !px-3 !py-2 !text-xs">
