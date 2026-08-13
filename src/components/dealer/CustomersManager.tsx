@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   CalendarDays,
   CheckCircle2,
@@ -400,7 +400,7 @@ export function CustomersManager({
   const [query, setQuery] = useState('')
   const [expandedCustomerId, setExpandedCustomerId] = useState<string | null>(null)
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
-  const initialSelectionApplied = useRef(false)
+  const [initialSelectionApplied, setInitialSelectionApplied] = useState(false)
 
   const selectedAppointment = useMemo(
     () => appointments.find((appointment) => appointment.id === selectedAppointmentId) ?? null,
@@ -441,13 +441,10 @@ export function CustomersManager({
     })
   }, [appointments, billingMap, initialCustomers])
 
-  useEffect(() => {
-    if (initialSelectionApplied.current) return
-    initialSelectionApplied.current = true
-    if (customerRows[0]) {
-      setExpandedCustomerId(customerRows[0].customer.id)
-    }
-  }, [customerRows])
+  if (!initialSelectionApplied && customerRows[0]) {
+    setInitialSelectionApplied(true)
+    setExpandedCustomerId(customerRows[0].customer.id)
+  }
 
   const visibleRows = useMemo(() => {
     const normalized = query.trim().toLowerCase()

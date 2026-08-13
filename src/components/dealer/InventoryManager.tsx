@@ -148,7 +148,7 @@ export function InventoryManager({ initialVehicles, businessId }: { initialVehic
   const supabase = useMemo(() => createClient(), [])
 
   function showToast(title: string, message?: string, tone: ToastState['tone'] = 'emerald') {
-    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`
+    const id = crypto.randomUUID()
     setToast({ id, title, message, tone })
     setTimeout(() => setToast((current) => (current?.id === id ? null : current)), 3200)
   }
