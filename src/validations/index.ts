@@ -336,6 +336,25 @@ export const realtimeToolRequestSchema = z.object({
   arguments: z.record(z.unknown()).optional().default({}),
 })
 
+export const realtimeConversationStartSchema = z.object({
+  businessSlug: z.string().min(2),
+  widgetSlug: slugSchema.optional(),
+  agentId: z.string().uuid().optional(),
+})
+
+export const realtimeConversationMessageSchema = z.object({
+  businessSlug: z.string().min(2),
+  role: z.enum(['agent', 'caller', 'system']),
+  content: z.string().min(1).max(8000),
+})
+
+export const realtimeConversationEndSchema = z.object({
+  businessSlug: z.string().min(2),
+  durationSeconds: z.number().int().min(0).optional(),
+  customerId: z.string().uuid().optional(),
+  appointmentId: z.string().uuid().optional(),
+})
+
 export const websiteSubscriberSchema = z.object({
   email: z.string().email(),
   name: z.string().max(120).optional().nullable(),

@@ -1,0 +1,57 @@
+import { createAdminClient } from '@/lib/supabase/admin'
+import { apiError, json, readJson } from '@/lib/api'
+import { getPublicBusinessProfile } from '@/services/business'
+import { updateConversationStatus } from '@/services/conversations'
+import { realtimeConversationEndSchema } from '@/validations'
+import { logAiUsage, realtimeVoiceCostUsd } from '@/services/aiUsage'
+
+// Called both mid-call (to link the customer/appointment a tool call just
+// created or found, so the Call Log row points at them) and on disconnect
+// (to close the conversation out with a duration and status).
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  let body: unknown
+  try {
+    body = await readJson(request)
+  } catch {
+    return apiError('Invalid JSON body', 400)
+  }
+
+  const parsed = realtimeConversationEndSchema.safeParse(body)
+  if (!parsed.success) {
+    return apiError('Invalid conversation update payload', 422, { issues: parsed.error.flatten() })
+  }
+
+  const admin = createAdminClient()
+
+  try {
+    const business = await getPublicBusinessProfile(admin, parsed.data.businessSlug)
+    if (!business) {
+      return apiError('Business not found', 404)
+    }
+
+    const conversation = await updateConversationStatus(admin, business.id, params.id, {
+      customerId: parsed.data.customerId,
+      appointmentId: parsed.data.appointmentId,
+      durationSeconds: parsed.data.durationSeconds,
+      status: parsed.data.durationSeconds !== undefined ? 'completed' : undefined,
+      endedAt: parsed.data.durationSeconds !== undefined ? new Date().toISOString() : undefined,
+      outcome: parsed.data.appointmentId ? 'booked_appointment' : undefined,
+    })
+
+    if (parsed.data.durationSeconds !== undefined) {
+      await logAiUsage(admin, {
+        businessId: business.id,
+        conversationId: conversation.id,
+        kind: 'realtime_voice',
+        durationSeconds: parsed.data.durationSeconds,
+        costUsd: realtimeVoiceCostUsd(parsed.data.durationSeconds),
+      })
+    }
+
+    return json({ conversation })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unable to update conversation'
+    return apiError(message, 500)
+  }
+}

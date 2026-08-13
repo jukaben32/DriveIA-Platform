@@ -589,7 +589,7 @@ export function AnalyticsManager({
     {
       label: 'AI API Spend',
       value: formatUsd(aiSpendUsd),
-      helper: 'OpenAI chat usage, all time',
+      helper: 'OpenAI chat + voice usage, all time',
       icon: DollarSign,
       tone: 'rose' as const,
     },

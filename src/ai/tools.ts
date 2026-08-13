@@ -246,26 +246,38 @@ export function buildDealerAssistantInstructions(opts: {
   ].join('\n\n')
 }
 
+// GA session shape (nested audio.input/audio.output). The old Beta shape
+// (flat input_audio_format/output_audio_format/modalities) was retired by
+// OpenAI on 2026-05-12 and now rejects every call with `beta_api_shape_disabled`.
 export function buildRealtimeSessionPayload(opts: {
   instructions: string
   voice?: string
   language?: string
 }) {
   return {
+    type: 'realtime' as const,
     model: process.env.OPENAI_REALTIME_MODEL || 'gpt-realtime',
-    voice: opts.voice || 'alloy',
     instructions: opts.instructions,
-    input_audio_format: 'pcm16',
-    output_audio_format: 'pcm16',
-    turn_detection: {
-      type: 'server_vad',
-      threshold: 0.5,
-      prefix_padding_ms: 300,
-      silence_duration_ms: 500,
+    output_modalities: ['audio'],
+    audio: {
+      input: {
+        format: { type: 'audio/pcm', rate: 24000 },
+        transcription: {
+          model: 'whisper-1',
+          language: opts.language,
+        },
+        turn_detection: {
+          type: 'server_vad',
+          threshold: 0.5,
+          prefix_padding_ms: 300,
+          silence_duration_ms: 500,
+        },
+      },
+      output: {
+        format: { type: 'audio/pcm', rate: 24000 },
+        voice: opts.voice || 'alloy',
+      },
     },
-    temperature: 0.4,
-    modalities: ['text', 'audio'],
-    language: opts.language || 'en',
     tools: dealerRealtimeTools,
   }
 }
