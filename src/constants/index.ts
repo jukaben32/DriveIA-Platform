@@ -17,10 +17,10 @@ export const AGENT_STATUSES = ['draft', 'live', 'paused'] as const
 export const SERVICE_PRICE_TYPES = ['fixed', 'starting_at', 'contact'] as const
 export const CONVERSATION_OUTCOMES = ['booked_appointment', 'qualified_lead', 'no_action', 'escalated'] as const
 export const CONVERSATION_CHANNELS = ['widget_voice', 'widget_chat', 'phone', 'whatsapp'] as const
-export const NOTIFICATION_CATEGORIES = ['appointment', 'billing', 'widget', 'support', 'system'] as const
+export const NOTIFICATION_CATEGORIES = ['appointment', 'billing', 'widget', 'support', 'inventory', 'system'] as const
 export const WEBSITE_TEMPLATES = ['serenity', 'pulse', 'clarity'] as const
 export const BILLING_TRANSACTION_STATUSES = ['pending', 'confirmed', 'failed', 'refunded'] as const
-export const BILLING_PAYMENT_TYPES = ['booking_deposit', 'full_payment', 'subscription', 'portal_topup'] as const
+export const BILLING_PAYMENT_TYPES = ['booking_deposit', 'vehicle_deposit', 'rental_payment', 'full_payment', 'subscription', 'portal_topup'] as const
 export const BUSINESS_MEMBER_ROLES = ['owner', 'admin', 'staff', 'assistant'] as const
 
 export const DAYS_OF_WEEK = [

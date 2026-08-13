@@ -3,10 +3,11 @@ import type {
   Website,
   WebsiteContent,
   WebsiteFaq,
+  WebsiteHighlight,
   WebsiteService,
-  WebsiteSpecialty,
   WebsiteTeamMember,
   WebsiteTestimonial,
+  WebsiteVehicleHighlight,
 } from '@/types'
 import { slugify } from '@/lib/utils'
 import type { DbClient } from './_shared'
@@ -41,10 +42,11 @@ function toWebsite(row: any): Website {
     contactHours: row.contact_hours ?? null,
     contactMapsUrl: row.contact_maps_url ?? null,
     yearsExperience: row.years_experience ?? null,
-    patientsServed: row.patients_served ?? null,
+    customersServed: row.customers_served ?? null,
     satisfactionPct: row.satisfaction_pct ?? null,
     trustBadges: row.trust_badges ?? [],
     featuredServiceIds: row.featured_service_ids ?? [],
+    featuredVehicleIds: row.featured_vehicle_ids ?? [],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -93,7 +95,7 @@ function toTestimonial(row: any): WebsiteTestimonial {
   }
 }
 
-function toSpecialty(row: any): WebsiteSpecialty {
+function toHighlight(row: any): WebsiteHighlight {
   return {
     id: row.id,
     businessId: row.business_id,
@@ -111,6 +113,49 @@ function toFaq(row: any): WebsiteFaq {
     answer: row.answer,
     sortOrder: row.sort_order ?? 0,
     createdAt: row.created_at,
+  }
+}
+
+function toVehicleHighlight(row: any): WebsiteVehicleHighlight {
+  return {
+    id: row.id,
+    businessId: row.business_id,
+    vehicleId: row.vehicle_id,
+    sortOrder: row.sort_order ?? 0,
+    createdAt: row.created_at,
+    vehicle: row.vehicles
+      ? {
+          id: row.vehicles.id,
+          businessId: row.vehicles.business_id,
+          stockNumber: row.vehicles.stock_number ?? null,
+          vin: row.vehicles.vin ?? null,
+          make: row.vehicles.make,
+          model: row.vehicles.model,
+          trim: row.vehicles.trim ?? null,
+          year: row.vehicles.year,
+          bodyType: row.vehicles.body_type ?? null,
+          condition: row.vehicles.condition,
+          mileage: row.vehicles.mileage ?? null,
+          exteriorColor: row.vehicles.exterior_color ?? null,
+          interiorColor: row.vehicles.interior_color ?? null,
+          transmission: row.vehicles.transmission ?? null,
+          fuelType: row.vehicles.fuel_type ?? null,
+          listingType: row.vehicles.listing_type,
+          salePrice: row.vehicles.sale_price ?? null,
+          rentalDailyRate: row.vehicles.rental_daily_rate ?? null,
+          rentalWeeklyRate: row.vehicles.rental_weekly_rate ?? null,
+          currency: row.vehicles.currency,
+          status: row.vehicles.status,
+          description: row.vehicles.description ?? null,
+          features: row.vehicles.features ?? [],
+          photoUrls: row.vehicles.photo_urls ?? [],
+          location: row.vehicles.location ?? null,
+          isFeatured: row.vehicles.is_featured ?? false,
+          sortOrder: row.vehicles.sort_order ?? 0,
+          createdAt: row.vehicles.created_at,
+          updatedAt: row.vehicles.updated_at,
+        }
+      : null,
   }
 }
 
@@ -133,8 +178,8 @@ function buildWebsiteRow(input: WebsiteInput, businessId: string, current?: Webs
     hero_headline: input.heroHeadline ?? current?.heroHeadline ?? null,
     hero_subheadline: input.heroSubheadline ?? current?.heroSubheadline ?? null,
     hero_image_url: input.heroImageUrl ?? current?.heroImageUrl ?? null,
-    cta_primary_text: input.ctaPrimaryText ?? current?.ctaPrimaryText ?? 'Book Appointment',
-    cta_secondary_text: input.ctaSecondaryText ?? current?.ctaSecondaryText ?? 'View Services',
+    cta_primary_text: input.ctaPrimaryText ?? current?.ctaPrimaryText ?? 'Schedule Test Drive',
+    cta_secondary_text: input.ctaSecondaryText ?? current?.ctaSecondaryText ?? 'View Inventory',
     about_title: input.aboutTitle ?? current?.aboutTitle ?? 'About Us',
     about_story: input.aboutStory ?? current?.aboutStory ?? null,
     about_photo_url: input.aboutPhotoUrl ?? current?.aboutPhotoUrl ?? null,
@@ -146,10 +191,11 @@ function buildWebsiteRow(input: WebsiteInput, businessId: string, current?: Webs
     contact_hours: input.contactHours ?? current?.contactHours ?? null,
     contact_maps_url: input.contactMapsUrl ?? current?.contactMapsUrl ?? null,
     years_experience: input.yearsExperience ?? current?.yearsExperience ?? null,
-    patients_served: input.patientsServed ?? current?.patientsServed ?? null,
+    customers_served: input.customersServed ?? current?.customersServed ?? null,
     satisfaction_pct: input.satisfactionPct ?? current?.satisfactionPct ?? null,
     trust_badges: input.trustBadges ?? current?.trustBadges ?? [],
     featured_service_ids: input.featuredServiceIds ?? current?.featuredServiceIds ?? [],
+    featured_vehicle_ids: input.featuredVehicleIds ?? current?.featuredVehicleIds ?? [],
   }
 }
 
@@ -220,19 +266,20 @@ export async function getOrCreateWebsiteForBusiness(
       site_title: business.name,
       site_description: business.description || `Website for ${business.name}.`,
       hero_headline: business.name,
-      hero_subheadline: business.description || 'Book appointments and get help fast.',
-      cta_primary_text: 'Book Appointment',
-      cta_secondary_text: 'View Services',
-      about_title: 'About the clinic',
+      hero_subheadline: business.description || 'Browse inventory and schedule a test drive in minutes.',
+      cta_primary_text: 'Schedule Test Drive',
+      cta_secondary_text: 'View Inventory',
+      about_title: 'About the dealership',
       about_story: business.description ?? null,
-      footer_tagline: 'Powered by Clara AI',
+      footer_tagline: 'Powered by DriveIA',
       footer_copyright: `Copyright ${new Date().getFullYear()} ${business.name}`,
       contact_phone: business.phone ?? null,
       contact_email: business.contactEmail ?? null,
       contact_address: business.address ?? null,
-      contact_hours: 'Mon - Fri, 9:00 AM - 5:00 PM',
+      contact_hours: 'Mon - Sat, 9:00 AM - 6:00 PM',
       trust_badges: [],
       featured_service_ids: [],
+      featured_vehicle_ids: [],
     })
     .select('*')
     .single()
@@ -270,10 +317,11 @@ export async function createOrUpdateWebsite(
     contactHours?: string | null
     contactMapsUrl?: string | null
     yearsExperience?: number | null
-    patientsServed?: number | null
+    customersServed?: number | null
     satisfactionPct?: number | null
     trustBadges?: string[]
     featuredServiceIds?: string[]
+    featuredVehicleIds?: string[]
   }
 ) {
   const current = await getWebsiteRowByBusinessId(supabase, businessId)
@@ -291,8 +339,8 @@ export async function createOrUpdateWebsite(
       heroHeadline: input.heroHeadline ?? current?.heroHeadline ?? null,
       heroSubheadline: input.heroSubheadline ?? current?.heroSubheadline ?? null,
       heroImageUrl: input.heroImageUrl ?? current?.heroImageUrl ?? null,
-      ctaPrimaryText: input.ctaPrimaryText ?? current?.ctaPrimaryText ?? 'Book Appointment',
-      ctaSecondaryText: input.ctaSecondaryText ?? current?.ctaSecondaryText ?? 'View Services',
+      ctaPrimaryText: input.ctaPrimaryText ?? current?.ctaPrimaryText ?? 'Schedule Test Drive',
+      ctaSecondaryText: input.ctaSecondaryText ?? current?.ctaSecondaryText ?? 'View Inventory',
       aboutTitle: input.aboutTitle ?? current?.aboutTitle ?? 'About Us',
       aboutStory: input.aboutStory ?? current?.aboutStory ?? null,
       aboutPhotoUrl: input.aboutPhotoUrl ?? current?.aboutPhotoUrl ?? null,
@@ -304,10 +352,11 @@ export async function createOrUpdateWebsite(
       contactHours: input.contactHours ?? current?.contactHours ?? null,
       contactMapsUrl: input.contactMapsUrl ?? current?.contactMapsUrl ?? null,
       yearsExperience: input.yearsExperience ?? current?.yearsExperience ?? null,
-      patientsServed: input.patientsServed ?? current?.patientsServed ?? null,
+      customersServed: input.customersServed ?? current?.customersServed ?? null,
       satisfactionPct: input.satisfactionPct ?? current?.satisfactionPct ?? null,
       trustBadges: input.trustBadges ?? current?.trustBadges ?? [],
       featuredServiceIds: input.featuredServiceIds ?? current?.featuredServiceIds ?? [],
+      featuredVehicleIds: input.featuredVehicleIds ?? current?.featuredVehicleIds ?? [],
     },
     current
   )
@@ -365,10 +414,11 @@ export async function updateWebsite(supabase: DbClient, businessId: string, webs
     contactHours: patch.contactHours ?? current.contactHours,
     contactMapsUrl: patch.contactMapsUrl ?? current.contactMapsUrl,
     yearsExperience: patch.yearsExperience ?? current.yearsExperience,
-    patientsServed: patch.patientsServed ?? current.patientsServed,
+    customersServed: patch.customersServed ?? current.customersServed,
     satisfactionPct: patch.satisfactionPct ?? current.satisfactionPct,
     trustBadges: patch.trustBadges ?? current.trustBadges,
     featuredServiceIds: patch.featuredServiceIds ?? current.featuredServiceIds,
+    featuredVehicleIds: patch.featuredVehicleIds ?? current.featuredVehicleIds,
   }
 
   return createOrUpdateWebsite(supabase, businessId, merged)
@@ -384,7 +434,7 @@ export async function publishWebsite(supabase: DbClient, businessId: string, web
 
 async function replaceList<T>(
   supabase: DbClient,
-  table: 'website_services' | 'website_team_members' | 'website_testimonials' | 'website_specialties' | 'website_faqs',
+  table: 'website_services' | 'website_team_members' | 'website_testimonials' | 'website_highlights' | 'website_faqs',
   businessId: string,
   items: T[],
   toRow: (item: T, index: number) => Record<string, unknown>
@@ -403,19 +453,36 @@ async function replaceList<T>(
   if (insertError) throw insertError
 }
 
+async function replaceVehicleHighlights(supabase: DbClient, businessId: string, vehicleIds: string[]) {
+  const { error: deleteError } = await supabase.from('website_vehicle_highlights').delete().eq('business_id', businessId)
+  if (deleteError) throw deleteError
+
+  if (vehicleIds.length === 0) return
+
+  const rows = vehicleIds.map((vehicleId, index) => ({
+    business_id: businessId,
+    vehicle_id: vehicleId,
+    sort_order: index,
+  }))
+
+  const { error: insertError } = await supabase.from('website_vehicle_highlights').insert(rows)
+  if (insertError) throw insertError
+}
+
 export async function getWebsiteContentForBusiness(supabase: DbClient, businessId: string): Promise<WebsiteContent> {
   const website = await getWebsiteRowByBusinessId(supabase, businessId)
   if (!website) {
     throw new Error('Website not found')
   }
 
-  const [{ data: services }, { data: teamMembers }, { data: testimonials }, { data: specialties }, { data: faqs }] =
+  const [{ data: services }, { data: teamMembers }, { data: testimonials }, { data: highlights }, { data: faqs }, { data: vehicleHighlights }] =
     await Promise.all([
       supabase.from('website_services').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
       supabase.from('website_team_members').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
       supabase.from('website_testimonials').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
-      supabase.from('website_specialties').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
+      supabase.from('website_highlights').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
       supabase.from('website_faqs').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
+      supabase.from('website_vehicle_highlights').select('*, vehicles(*)').eq('business_id', businessId).order('sort_order', { ascending: true }),
     ])
 
   return {
@@ -423,8 +490,9 @@ export async function getWebsiteContentForBusiness(supabase: DbClient, businessI
     services: (services ?? []).map(toService),
     teamMembers: (teamMembers ?? []).map(toTeamMember),
     testimonials: (testimonials ?? []).map(toTestimonial),
-    specialties: (specialties ?? []).map(toSpecialty),
+    highlights: (highlights ?? []).map(toHighlight),
     faqs: (faqs ?? []).map(toFaq),
+    vehicleHighlights: (vehicleHighlights ?? []).map(toVehicleHighlight),
   }
 }
 
@@ -466,7 +534,7 @@ export async function saveWebsiteContent(
     sort_order: index,
   }))
 
-  await replaceList(supabase, 'website_specialties', businessId, input.specialties, (item, index) => ({
+  await replaceList(supabase, 'website_highlights', businessId, input.highlights, (item, index) => ({
     label: item.label,
     sort_order: index,
   }))
@@ -476,6 +544,10 @@ export async function saveWebsiteContent(
     answer: item.answer,
     sort_order: index,
   }))
+
+  if (input.featuredVehicleIds) {
+    await replaceVehicleHighlights(supabase, businessId, input.featuredVehicleIds)
+  }
 
   return getWebsiteContentForBusiness(supabase, businessId)
 }

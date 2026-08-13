@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { BrandMark, SectionEyebrow, SurfaceCard } from '@/components/clinic/shared'
+import { BrandMark, SectionEyebrow, SurfaceCard } from '@/components/dealer/shared'
 import { getErrorMessage } from '@/lib/utils'
 
 const DASHBOARD_BASE = 'http://localhost'

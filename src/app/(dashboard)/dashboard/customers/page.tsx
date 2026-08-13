@@ -2,11 +2,11 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getBusinessForUser } from '@/services/business'
 import { listBillingTransactions } from '@/services/billing'
-import { listPatientsForBusiness } from '@/services/patients'
+import { listCustomersForBusiness } from '@/services/customers'
 import { listAppointmentsForBusiness } from '@/services/appointments'
-import { PatientsManager } from '@/components/clinic/PatientsManager'
+import { CustomersManager } from '@/components/dealer/CustomersManager'
 
-export default async function PatientsPage() {
+export default async function CustomersPage() {
   const supabase = await createClient()
   const {
     data: { user },
@@ -16,15 +16,15 @@ export default async function PatientsPage() {
   const business = await getBusinessForUser(supabase, user.id)
   if (!business) redirect('/signup')
 
-  const [patients, appointments, billingTransactions] = await Promise.all([
-    listPatientsForBusiness(supabase, business.id),
+  const [customers, appointments, billingTransactions] = await Promise.all([
+    listCustomersForBusiness(supabase, business.id),
     listAppointmentsForBusiness(supabase, business.id, { limit: 200 }),
     listBillingTransactions(supabase, business.id, 500),
   ])
 
   return (
-    <PatientsManager
-      initialPatients={patients}
+    <CustomersManager
+      initialCustomers={customers}
       appointments={appointments}
       billingTransactions={billingTransactions}
       timezone={business.timezone}

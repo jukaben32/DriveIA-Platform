@@ -1,4 +1,4 @@
-import { PortalSupportScreen } from '@/components/clinic/screens'
+import { PortalSupportScreen } from '@/components/dealer/screens'
 
 export default function Page() {
   return <PortalSupportScreen />

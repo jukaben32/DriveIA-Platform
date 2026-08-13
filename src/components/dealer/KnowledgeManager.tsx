@@ -34,7 +34,7 @@ import Select from '@/components/ui/Select'
 import Textarea from '@/components/ui/Textarea'
 import Modal from '@/components/ui/Modal'
 import Toast from '@/components/ui/Toast'
-import { MetricCard, SectionEyebrow, StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import { MetricCard, SectionEyebrow, StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 
 type KnowledgeToastTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
 
@@ -73,69 +73,69 @@ const CATEGORY_ACCENTS: Record<KnowledgeTemplateCategoryKey | 'all', ChipAccent>
     border: 'rgba(16, 33, 41, 0.08)',
     text: 'var(--text-muted)',
   },
-  appointments: {
+  'test-drives': {
     fill: 'rgba(19, 122, 114, 0.09)',
     border: 'rgba(19, 122, 114, 0.2)',
     text: 'var(--brand-strong)',
   },
-  'insurance-billing': {
+  'sales-inventory': {
+    fill: 'rgba(245, 158, 11, 0.1)',
+    border: 'rgba(245, 158, 11, 0.2)',
+    text: '#b45309',
+  },
+  financing: {
     fill: 'rgba(37, 99, 235, 0.08)',
     border: 'rgba(37, 99, 235, 0.18)',
     text: '#1d4ed8',
+  },
+  'trade-ins': {
+    fill: 'rgba(236, 72, 153, 0.09)',
+    border: 'rgba(236, 72, 153, 0.18)',
+    text: '#be185d',
+  },
+  rentals: {
+    fill: 'rgba(59, 130, 246, 0.08)',
+    border: 'rgba(59, 130, 246, 0.18)',
+    text: '#1d4ed8',
+  },
+  'protection-plans': {
+    fill: 'rgba(14, 116, 144, 0.08)',
+    border: 'rgba(14, 116, 144, 0.18)',
+    text: '#0f766e',
+  },
+  'service-maintenance': {
+    fill: 'rgba(16, 185, 129, 0.08)',
+    border: 'rgba(16, 185, 129, 0.18)',
+    text: '#047857',
+  },
+  'delivery-pickup': {
+    fill: 'rgba(245, 158, 11, 0.1)',
+    border: 'rgba(245, 158, 11, 0.2)',
+    text: '#b45309',
+  },
+  'fleet-corporate': {
+    fill: 'rgba(236, 72, 153, 0.09)',
+    border: 'rgba(236, 72, 153, 0.18)',
+    text: '#be185d',
   },
   'hours-location': {
     fill: 'rgba(16, 185, 129, 0.08)',
     border: 'rgba(16, 185, 129, 0.18)',
     text: '#047857',
   },
-  'new-patients': {
+  'new-customers': {
     fill: 'rgba(245, 158, 11, 0.1)',
     border: 'rgba(245, 158, 11, 0.2)',
     text: '#b45309',
   },
-  prescriptions: {
-    fill: 'rgba(236, 72, 153, 0.09)',
-    border: 'rgba(236, 72, 153, 0.18)',
-    text: '#be185d',
-  },
-  'test-results': {
-    fill: 'rgba(59, 130, 246, 0.08)',
-    border: 'rgba(59, 130, 246, 0.18)',
-    text: '#1d4ed8',
-  },
-  telehealth: {
-    fill: 'rgba(14, 116, 144, 0.08)',
-    border: 'rgba(14, 116, 144, 0.18)',
-    text: '#0f766e',
-  },
-  referrals: {
-    fill: 'rgba(16, 185, 129, 0.08)',
-    border: 'rgba(16, 185, 129, 0.18)',
-    text: '#047857',
-  },
-  pediatrics: {
-    fill: 'rgba(245, 158, 11, 0.1)',
-    border: 'rgba(245, 158, 11, 0.2)',
-    text: '#b45309',
-  },
-  'mental-health': {
-    fill: 'rgba(236, 72, 153, 0.09)',
-    border: 'rgba(236, 72, 153, 0.18)',
-    text: '#be185d',
-  },
-  'urgent-care': {
-    fill: 'rgba(245, 158, 11, 0.1)',
-    border: 'rgba(245, 158, 11, 0.2)',
-    text: '#b45309',
-  },
-  'privacy-hipaa': {
+  'privacy-data': {
     fill: 'rgba(16, 33, 41, 0.05)',
     border: 'rgba(16, 33, 41, 0.1)',
     text: 'var(--text-muted)',
   },
 }
 
-function createDraft(category: KnowledgeTemplateCategoryKey = 'appointments'): KnowledgeDraft {
+function createDraft(category: KnowledgeTemplateCategoryKey = 'test-drives'): KnowledgeDraft {
   return {
     question: '',
     answer: '',
@@ -152,7 +152,7 @@ function resolveCategoryKey(value: string | null | undefined): KnowledgeTemplate
   const match = KNOWLEDGE_TEMPLATE_CATEGORIES.find(
     (item) => item.key !== 'all' && (item.key === value || item.label.toLowerCase() === normalized),
   )
-  return (match?.key ?? 'appointments') as KnowledgeTemplateCategoryKey
+  return (match?.key ?? 'test-drives') as KnowledgeTemplateCategoryKey
 }
 
 function resolveCategoryLabel(value: string | null | undefined) {
@@ -590,7 +590,7 @@ export function KnowledgeManager({
   const [expandedDocumentId, setExpandedDocumentId] = useState<string | null>(
     initialDocuments.find((doc) => doc.isActive)?.id ?? initialDocuments[0]?.id ?? null,
   )
-  const [selectedCategory, setSelectedCategory] = useState<KnowledgeTemplateCategoryKey | 'all'>('appointments')
+  const [selectedCategory, setSelectedCategory] = useState<KnowledgeTemplateCategoryKey | 'all'>('test-drives')
   const [searchQuery, setSearchQuery] = useState('')
   const [previewTarget, setPreviewTarget] = useState<PreviewTarget | null>(null)
   const [savingDraft, setSavingDraft] = useState(false)
@@ -611,7 +611,7 @@ export function KnowledgeManager({
       : templateCategories.filter((item) => item.key === selectedCategory)
 
   const addVisibleTemplatesLabel =
-    selectedCategory === 'all' ? 'Add visible topics' : `Add all ${selectedCategory === 'appointments' ? 'appointments' : getKnowledgeTemplateCategoryLabel(selectedCategory)}`
+    selectedCategory === 'all' ? 'Add visible topics' : `Add all ${selectedCategory === 'test-drives' ? 'test drive' : getKnowledgeTemplateCategoryLabel(selectedCategory)}`
 
   function pushToast(toast: Omit<KnowledgeToast, 'id'>) {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -879,17 +879,17 @@ export function KnowledgeManager({
             <div className="max-w-2xl">
               <SectionEyebrow>Knowledge Base</SectionEyebrow>
               <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-strong)] md:text-4xl">
-                Teach Clara the exact answers your patients expect
+                Teach Clara the exact answers your customers expect
               </h2>
               <p className="mt-3 max-w-2xl text-base leading-7 text-[var(--text-muted)]">
-                Add custom articles, browse clinic FAQ templates, and keep archived items recoverable. The active
+                Add custom articles, browse dealership FAQ templates, and keep archived items recoverable. The active
                 list below is what the AI agent uses during live calls and chat.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                <CategoryChip categoryKey="appointments" label={`${activeDocuments.length} active answers`} />
-                <CategoryChip categoryKey="telehealth" label={`${KNOWLEDGE_TEMPLATE_BANK.length} templates`} />
-                <CategoryChip categoryKey="privacy-hipaa" label={`${archivedDocuments.length} archived`} />
+                <CategoryChip categoryKey="test-drives" label={`${activeDocuments.length} active answers`} />
+                <CategoryChip categoryKey="rentals" label={`${KNOWLEDGE_TEMPLATE_BANK.length} templates`} />
+                <CategoryChip categoryKey="privacy-data" label={`${archivedDocuments.length} archived`} />
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -906,7 +906,7 @@ export function KnowledgeManager({
                   <Plus className="h-4 w-4" />
                   Add custom FAQ
                 </Button>
-                <Button variant="secondary" onClick={() => setSelectedCategory('appointments')}>
+                <Button variant="secondary" onClick={() => setSelectedCategory('test-drives')}>
                   <Sparkles className="h-4 w-4" />
                   Browse templates
                 </Button>
@@ -948,7 +948,7 @@ export function KnowledgeManager({
           <MetricCard
             label="Template topics"
             value={String(templateCategories.length)}
-            delta="Appointments, billing, telehealth, and more"
+            delta="Test drives, financing, rentals, and more"
             icon={Filter}
             tone="amber"
           />
@@ -1023,7 +1023,7 @@ export function KnowledgeManager({
                       <Plus className="h-4 w-4" />
                       Create article
                     </Button>
-                    <Button variant="secondary" onClick={() => setSelectedCategory('appointments')}>
+                    <Button variant="secondary" onClick={() => setSelectedCategory('test-drives')}>
                       <Sparkles className="h-4 w-4" />
                       Browse templates
                     </Button>
@@ -1076,7 +1076,7 @@ export function KnowledgeManager({
                     FAQ templates
                   </div>
                   <h3 className="mt-3 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">
-                    Pre-written patient Q&A
+                    Pre-written customer Q&A
                   </h3>
                   <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
                     {KNOWLEDGE_TEMPLATE_BANK.length} pre-written Q&A pairs across {templateCategories.length} topics.
@@ -1242,7 +1242,7 @@ export function KnowledgeManager({
                   {draft.question.trim() || 'Is parking available?'}
                 </div>
                 <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-                  {draft.answer.trim() || 'Yes, free parking is available at our clinic.'}
+                  {draft.answer.trim() || 'Yes, free parking is available at our dealership.'}
                 </p>
               </div>
             </div>
@@ -1261,7 +1261,7 @@ export function KnowledgeManager({
               <Textarea
                 value={draft.answer}
                 onChange={(event) => setDraft((current) => ({ ...current, answer: event.target.value }))}
-                placeholder="Yes, free parking is available at our clinic."
+                placeholder="Yes, free parking is available at our dealership."
                 label="Answer the agent will give"
                 hint="Keep the answer short, direct, and ready for live conversation."
                 rows={6}

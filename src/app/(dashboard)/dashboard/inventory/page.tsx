@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getBusinessForUser } from '@/services/business'
-import { listSupportTickets } from '@/services/support'
-import { SupportManager } from '@/components/dealer/SupportManager'
+import { listVehiclesForBusiness } from '@/services/vehicles'
+import { InventoryManager } from '@/components/dealer/InventoryManager'
 
-export default async function SupportPage() {
+export default async function InventoryPage() {
   const supabase = await createClient()
   const {
     data: { user },
@@ -14,7 +14,7 @@ export default async function SupportPage() {
   const business = await getBusinessForUser(supabase, user.id)
   if (!business) redirect('/signup')
 
-  const tickets = await listSupportTickets(supabase, business.id, 50)
+  const vehicles = await listVehiclesForBusiness(supabase, business.id)
 
-  return <SupportManager initialTickets={tickets} businessId={business.id} timezone={business.timezone} businessName={business.name} />
+  return <InventoryManager initialVehicles={vehicles} businessId={business.id} />
 }

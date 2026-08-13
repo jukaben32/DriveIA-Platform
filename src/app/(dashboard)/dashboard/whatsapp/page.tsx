@@ -5,8 +5,8 @@ import { createClient } from '@/lib/supabase/server'
 import { getBusinessForUser } from '@/services/business'
 import { getWhatsappConnection } from '@/services/whatsapp'
 import { listAgentsForBusiness } from '@/services/agents'
-import { WhatsappManager } from '@/components/clinic/WhatsappManager'
-import { SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import { WhatsappManager } from '@/components/dealer/WhatsappManager'
+import { SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 
 function statusTone(status: string | null | undefined) {
   if (status === 'connected') return 'emerald' as const
@@ -47,7 +47,7 @@ export default async function WhatsappPage() {
                 Implementation notes
               </p>
               <h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">
-                How WhatsApp fits the clinic stack
+                How WhatsApp fits the dealership stack
               </h2>
             </div>
             <StatusBadge tone={statusTone(connection?.status)}>

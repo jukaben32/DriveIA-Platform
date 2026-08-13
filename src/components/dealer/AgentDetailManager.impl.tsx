@@ -14,7 +14,7 @@ import {
 
 import { createClient } from '@/lib/supabase/client'
 import { cn, formatCurrency } from '@/lib/utils'
-import type { AiAgent, ClinicService } from '@/types'
+import type { AiAgent, Service } from '@/types'
 import { deleteAgent, updateAgent } from '@/services/agents'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -23,14 +23,14 @@ import Select from '@/components/ui/Select'
 import Textarea from '@/components/ui/Textarea'
 import Tabs from '@/components/ui/Tabs'
 import Toast from '@/components/ui/Toast'
-import { MetricCard, SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import { MetricCard, SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 import {
   DEFAULT_AGENT_PROMPT,
   PERSONALITY_OPTIONS,
   SENSITIVITY_OPTIONS,
   VOICE_OPTIONS,
   type AgentSensitivityPreset,
-} from '@/components/clinic/agent-templates'
+} from '@/components/dealer/agent-templates'
 
 type ToastTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
 
@@ -95,11 +95,11 @@ function getServiceIds(agent: AiAgent) {
   return agent.assignedServiceIds ?? []
 }
 
-function getServiceNames(agent: AiAgent, services: ClinicService[]) {
+function getServiceNames(agent: AiAgent, services: Service[]) {
   const lookup = new Map(services.map((service) => [service.id, service] as const))
   return getServiceIds(agent)
     .map((serviceId) => lookup.get(serviceId))
-    .filter((service): service is ClinicService => Boolean(service))
+    .filter((service): service is Service => Boolean(service))
     .map((service) => service.name)
 }
 
@@ -115,7 +115,7 @@ function buildTranscript(agent: AiAgent) {
     },
     {
       role: 'AI',
-      content: `Of course. I can help with ${agent.specialty ?? 'your clinic service'} and gather the details needed to complete the booking.`,
+      content: `Of course. I can help with ${agent.specialty ?? 'your dealership service'} and gather the details needed to complete the booking.`,
     },
   ]
 }
@@ -144,7 +144,7 @@ export function AgentDetailManager({
 }: {
   agent: AiAgent
   businessId: string
-  services: ClinicService[]
+  services: Service[]
   initialMode: 'configure' | 'test-live'
 }) {
   const [currentAgent, setCurrentAgent] = useState(agent)
@@ -309,7 +309,7 @@ export function AgentDetailManager({
               <div>
                 <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Agent Configuration</div>
                 <h2 className="mt-1 text-2xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
-                  Update how this agent behaves on patient calls
+                  Update how this agent behaves on customer calls
                 </h2>
               </div>
               <Badge tone="slate" className="bg-white/90 normal-case tracking-normal">
@@ -389,7 +389,7 @@ export function AgentDetailManager({
                   <div>
                     <div className="text-sm font-semibold text-[var(--text-strong)]">Assigned Services</div>
                     <p className="mt-1 text-sm text-[var(--text-muted)]">
-                      Choose which clinic services this agent is allowed to discuss.
+                      Choose which dealership services this agent is allowed to discuss.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -491,7 +491,7 @@ export function AgentDetailManager({
             <SurfaceCard className="p-6">
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Live Snapshot</div>
               <h3 className="mt-2 text-xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">{currentAgent.name}</h3>
-              <div className="mt-1 text-sm text-[var(--text-muted)]">{currentAgent.title ?? currentAgent.specialty ?? 'Clinic agent'}</div>
+              <div className="mt-1 text-sm text-[var(--text-muted)]">{currentAgent.title ?? currentAgent.specialty ?? 'Dealership agent'}</div>
 
               <div className="mt-5 flex flex-wrap items-center gap-2">
                 <StatusBadge tone={STATUS_TONE[currentAgent.status]}>{STATUS_LABEL[currentAgent.status]}</StatusBadge>
@@ -625,7 +625,7 @@ export function AgentDetailManager({
                 <div className="flex items-center justify-between gap-3 border-b border-[var(--border-soft)] pb-4">
                   <div>
                     <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Book Appointment</div>
-                    <p className="mt-1 text-sm text-[var(--text-muted)]">Manually create an appointment for a patient.</p>
+                    <p className="mt-1 text-sm text-[var(--text-muted)]">Manually create an appointment for a customer.</p>
                   </div>
                   <Badge tone="slate" className="bg-white/90 normal-case tracking-normal">
                     {assignedServiceNames.length > 0 ? `${assignedServiceNames.length} services` : 'No services'}
@@ -686,12 +686,12 @@ export function AgentDetailManager({
                     value={bookingForm.notes}
                     onChange={(event) => setBookingForm((current) => ({ ...current, notes: event.target.value }))}
                     rows={4}
-                    hint="Any additional notes or patient concerns."
+                    hint="Any additional notes or customer concerns."
                   />
 
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-soft)] pt-4">
                     <div className="text-sm text-[var(--text-muted)]">
-                      The booking form mirrors the patient-facing appointment flow.
+                      The booking form mirrors the customer-facing appointment flow.
                     </div>
                     <Button type="submit">
                       <CalendarDays className="mr-2 h-4 w-4" />
@@ -707,7 +707,7 @@ export function AgentDetailManager({
             <SurfaceCard className="p-6">
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Agent Summary</div>
               <h3 className="mt-2 text-xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">{currentAgent.name}</h3>
-              <div className="mt-1 text-sm text-[var(--text-muted)]">{currentAgent.title ?? currentAgent.specialty ?? 'Clinic agent'}</div>
+              <div className="mt-1 text-sm text-[var(--text-muted)]">{currentAgent.title ?? currentAgent.specialty ?? 'Dealership agent'}</div>
 
               <div className="mt-5 flex flex-wrap items-center gap-2">
                 <StatusBadge tone={STATUS_TONE[currentAgent.status]}>{STATUS_LABEL[currentAgent.status]}</StatusBadge>
@@ -753,7 +753,7 @@ export function AgentDetailManager({
             <SurfaceCard className="p-6">
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Delete Agent</div>
               <p className="mt-3 text-sm leading-7 text-[var(--text-muted)]">
-                Removing this agent will keep the rest of the clinic setup intact, but the voice workflow will no longer be available.
+                Removing this agent will keep the rest of the dealership setup intact, but the voice workflow will no longer be available.
               </p>
               <Button variant="danger" className="mt-5 w-full" onClick={() => void handleDelete()}>
                 Delete Agent

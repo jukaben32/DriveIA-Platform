@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { AppointmentWithRelations, Conversation, DashboardAnalytics } from '@/types'
-import { StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import { StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 import { getDateKeyInTimeZone, getDayOfWeekInTimeZone } from '@/services/_shared'
 
 const NUMBER_FORMAT = new Intl.NumberFormat('en-US')
@@ -587,7 +587,7 @@ export function AnalyticsManager({
               Performance insights and trends
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--text-muted)] md:text-base">
-              Review conversations, bookings, and clinic activity in real time. The shapes below mirror the reference flow: trend, outcome split, and weekly breakdown.
+              Review conversations, bookings, and dealership activity in real time. The shapes below mirror the reference flow: trend, outcome split, and weekly breakdown.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:items-end">

@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import type { AppointmentWithRelations } from '@/types'
 import type { LucideIcon } from 'lucide-react'
-import { SurfaceCard, StatusBadge, Pill } from '@/components/clinic/shared'
+import { SurfaceCard, StatusBadge, Pill } from '@/components/dealer/shared'
 import { cn } from '@/lib/utils'
 import { AppointmentDetailsDrawer } from './AppointmentDetailsDrawer'
 import {
@@ -177,7 +177,7 @@ function AppointmentRow({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <div className="truncate font-semibold text-[var(--text-strong)]">
-              {appointment.patient?.name ?? 'Unknown patient'}
+              {appointment.customer?.name ?? 'Unknown customer'}
             </div>
             <StatusBadge tone={APPOINTMENT_STATUS_TONE[appointment.status]}>
               {APPOINTMENT_STATUS_LABEL[appointment.status]}
@@ -188,7 +188,7 @@ function AppointmentRow({
           </div>
 
           <div className="mt-1 truncate text-sm text-[var(--text-muted)]">
-            {appointment.patient?.phone ?? appointment.patient?.email ?? 'No contact on file'}
+            {appointment.customer?.phone ?? appointment.customer?.email ?? 'No contact on file'}
           </div>
         </div>
       </div>
@@ -419,7 +419,7 @@ export function ScheduleManager({
                 Appointments
               </div>
               <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[var(--text-strong)]">
-                Manage patient bookings &amp; schedule
+                Manage customer bookings &amp; schedule
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
                 Browse the monthly calendar, review today&apos;s visits, and open the detail drawer to confirm, complete, refund, or record payments in real time.
@@ -433,9 +433,9 @@ export function ScheduleManager({
             </div>
 
             <div className="hidden rounded-[24px] border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-right backdrop-blur-sm lg:block">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Clinic</div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Dealership</div>
               <div className="mt-1 font-display text-lg font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
-                {businessName ?? 'Clinic'}
+                {businessName ?? 'Dealership'}
               </div>
               <div className="mt-1 text-xs text-[var(--text-muted)]">{selectedDateLabel}</div>
             </div>
@@ -664,7 +664,7 @@ export function ScheduleManager({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <div className="truncate font-semibold text-[var(--text-strong)]">
-                          {appointment.patient?.name ?? 'Unknown patient'}
+                          {appointment.customer?.name ?? 'Unknown customer'}
                         </div>
                         <StatusBadge tone={APPOINTMENT_STATUS_TONE[appointment.status]}>
                           {APPOINTMENT_STATUS_LABEL[appointment.status]}

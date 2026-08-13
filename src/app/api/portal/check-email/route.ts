@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { apiError, json, readJson } from '@/lib/api'
 import { portalCheckEmailSchema } from '@/validations'
 import { getBusinessBySlug } from '@/services/business'
-import { getPatientByEmail } from '@/services/patients'
+import { getCustomerByEmail } from '@/services/customers'
 
 function isPortalPath(pathname: string) {
   return pathname === '/portal' || pathname.startsWith('/portal/')
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     return apiError('Business not found', 404)
   }
 
-  const patient = await getPatientByEmail(admin, business.id, parsed.data.email)
+  const customer = await getCustomerByEmail(admin, business.id, parsed.data.email)
   const supabase = await createServerSupabaseClient()
   const redirectUrl = new URL('/api/auth/callback', origin)
   const defaultNext = `/portal?businessSlug=${encodeURIComponent(business.slug)}`
@@ -80,6 +80,6 @@ export async function POST(request: Request) {
       name: business.name,
       slug: business.slug,
     },
-    patientExists: Boolean(patient),
+    customerExists: Boolean(customer),
   })
 }

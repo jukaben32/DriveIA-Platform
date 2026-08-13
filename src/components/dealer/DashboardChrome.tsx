@@ -9,6 +9,7 @@ import {
   Bot,
   CalendarDays,
   CalendarRange,
+  CarFront,
   FileText,
   Globe2,
   LayoutDashboard,
@@ -19,14 +20,14 @@ import {
   Search,
   Settings2,
   Sparkles,
-  Stethoscope,
   User,
   Users,
   LineChart,
   PhoneCall,
+  Wrench,
 } from 'lucide-react'
 
-import { BrandMark } from '@/components/clinic/shared'
+import { BrandMark } from '@/components/dealer/shared'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 
@@ -52,7 +53,8 @@ const navGroups: readonly NavGroup[] = [
       { href: '/dashboard/conversations', label: 'Conversations', icon: PhoneCall },
       { href: '/dashboard/appointments', label: 'Bookings', icon: CalendarDays },
       { href: '/dashboard/appointments/schedule', label: 'Schedule', icon: CalendarRange },
-      { href: '/dashboard/patients', label: 'Customers', icon: Users },
+      { href: '/dashboard/inventory', label: 'Inventory', icon: CarFront },
+      { href: '/dashboard/customers', label: 'Customers', icon: Users },
       { href: '/dashboard/support', label: 'Support', icon: LifeBuoy },
     ],
   },
@@ -60,7 +62,7 @@ const navGroups: readonly NavGroup[] = [
     label: 'SETUP',
     items: [
       { href: '/dashboard/agents', label: 'AI Agents', icon: Bot },
-      { href: '/dashboard/services', label: 'Services', icon: Stethoscope },
+      { href: '/dashboard/services', label: 'Services', icon: Wrench },
       { href: '/dashboard/faqs', label: 'Knowledge', icon: FileText },
       { href: '/dashboard/widget', label: 'Widget', icon: Sparkles },
       { href: '/dashboard/whatsapp', label: 'WhatsApp', icon: MessageCircle },

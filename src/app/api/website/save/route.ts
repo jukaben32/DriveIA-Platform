@@ -68,10 +68,11 @@ export async function POST(request: Request) {
       contactHours: parsed.data.contactHours ?? null,
       contactMapsUrl: parsed.data.contactMapsUrl ?? null,
       yearsExperience: parsed.data.yearsExperience ?? null,
-      patientsServed: parsed.data.patientsServed ?? null,
+      customersServed: parsed.data.customersServed ?? null,
       satisfactionPct: parsed.data.satisfactionPct ?? null,
       trustBadges: parsed.data.trustBadges ?? [],
       featuredServiceIds: parsed.data.featuredServiceIds ?? [],
+      featuredVehicleIds: parsed.data.featuredVehicleIds ?? [],
     })
 
     const content = await getWebsiteContentForBusiness(supabase, business.id)

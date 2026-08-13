@@ -4,12 +4,13 @@ import { getBusinessForCurrentUser, getBusinessMembershipRole, getServerSupabase
 import { businessSchema } from '@/validations'
 import { createBusiness, getBusinessAvailability, getBusinessById, getClosedDates, getDashboardAnalytics, getSubscription, listBusinessMembers, updateBusiness } from '@/services/business'
 import { listAgentsForBusiness } from '@/services/agents'
-import { listClinicServices } from '@/services/services'
+import { listServices } from '@/services/services'
 import { listWidgetsForBusiness } from '@/services/widgets'
 import { getWebsiteByBusinessId } from '@/services/websites'
 import { listNotificationsForBusiness, getUnreadNotificationCount } from '@/services/notifications'
 import { listKnowledgeDocuments } from '@/services/faqs'
 import { getBillingSummary } from '@/services/billing'
+import { getInventoryCounts } from '@/services/vehicles'
 
 const updateBusinessSchema = businessSchema
   .extend({
@@ -37,12 +38,13 @@ async function loadBusinessContext(supabase: Awaited<ReturnType<typeof getServer
     analytics,
     knowledgeDocuments,
     billingSummary,
+    inventoryCounts,
   ] = await Promise.all([
     getBusinessById(supabase, businessId),
     getSubscription(supabase, businessId),
     listBusinessMembers(supabase, businessId),
     listAgentsForBusiness(supabase, businessId),
-    listClinicServices(supabase, businessId),
+    listServices(supabase, businessId),
     getBusinessAvailability(supabase, businessId),
     getClosedDates(supabase, businessId),
     listWidgetsForBusiness(supabase, businessId),
@@ -52,6 +54,7 @@ async function loadBusinessContext(supabase: Awaited<ReturnType<typeof getServer
     getDashboardAnalytics(supabase, businessId),
     listKnowledgeDocuments(supabase, businessId, false),
     getBillingSummary(supabase, businessId),
+    getInventoryCounts(supabase, businessId),
   ])
 
   return {
@@ -69,6 +72,7 @@ async function loadBusinessContext(supabase: Awaited<ReturnType<typeof getServer
     analytics,
     knowledgeDocuments,
     billingSummary,
+    inventoryCounts,
   }
 }
 
@@ -95,6 +99,7 @@ export async function GET() {
       analytics: null,
       knowledgeDocuments: [],
       billingSummary: { total: 0, confirmed: 0, pending: 0, count: 0 },
+      inventoryCounts: { total: 0, available: 0, reserved: 0, sold: 0, rented: 0, inService: 0 },
     })
   }
 
@@ -124,7 +129,7 @@ export async function POST(request: Request) {
     ownerId: user.id,
     name: parsed.data.name,
     slug: parsed.data.slug,
-    specialty: parsed.data.specialty ?? null,
+    businessType: parsed.data.businessType ?? null,
     description: parsed.data.description ?? null,
     contactEmail: parsed.data.contactEmail ?? null,
     phone: parsed.data.phone ?? null,

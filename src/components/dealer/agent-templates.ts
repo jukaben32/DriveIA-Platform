@@ -1,4 +1,4 @@
-import type { ClinicService } from '@/types'
+import type { Service } from '@/types'
 
 export type AgentTemplateCategory =
   | 'all'
@@ -236,7 +236,7 @@ export function getTemplateCategoryLabel(category: AgentTemplateCategory) {
   return TEMPLATE_FILTERS.find((item) => item.key === category)?.label ?? 'All'
 }
 
-export function matchTemplateServiceIds(template: AgentTemplate, services: ClinicService[]) {
+export function matchTemplateServiceIds(template: AgentTemplate, services: Service[]) {
   const activeServices = services.filter((service) => service.active)
   const matched = activeServices.filter((service) =>
     template.serviceKeywords.some((keyword) => {
