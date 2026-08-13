@@ -12,14 +12,26 @@
     --panel-elevated: #ffffff;
     --text-strong: #102129;
     --text-muted: #5f6871;
-    --brand: #5b0f21;
-    --brand-strong: #26060d;
-    --brand-soft: #f1dde1;
+    /* Escala completa de marca (vino) — 950 a 50, generada en HSL constante */
+    --brand-950: #140a0c;
+    --brand-900: #1f0f12;
+    --brand-800: #520a18;
+    --brand-700: #710e24;
+    --brand-600: #8e1531;
+    --brand-500: #ad1f42;
+    --brand-400: #c44567;
+    --brand-300: #d3889d;
+    --brand-200: #e4b9c6;
+    --brand-100: #f2d9e1;
+    --brand-50:  #f7eef1;
+    --brand: var(--brand-600);
+    --brand-strong: var(--brand-900);
+    --brand-soft: var(--brand-100);
     --coral: #a45057;
     --coral-soft: #f3e1e3;
-    --teal-soft: #f1dde1;
+    --teal-soft: var(--brand-100);
     --border-soft: rgba(16, 33, 41, 0.12);
-    --border-strong: rgba(91, 15, 33, 0.34);
+    --border-strong: rgba(142, 21, 49, 0.34);
     --surface-dark: #0f2129;
   }
 
