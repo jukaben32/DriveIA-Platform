@@ -61,7 +61,19 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   // error instead of creating anything, so the user could never get in.
   if (!business) {
     const businessName = (user.user_metadata?.business_name as string | undefined)?.trim()
-    if (!businessName) redirect('/signup')
+    // Don't redirect('/signup') here: the middleware sends any authenticated
+    // user away from /signup straight back to /dashboard, so a session with
+    // no business and no business_name metadata would bounce between the
+    // two forever (ERR_TOO_MANY_REDIRECTS) instead of showing anything.
+    if (!businessName) {
+      return (
+        <ErrorScreen
+          title="Your account setup is incomplete"
+          body="We couldn't find a business for this account. Please contact support to finish setting it up."
+          detail="No business_name found in this account's signup data."
+        />
+      )
+    }
     try {
       // Confirmed with a live query against the production database: the
       // RLS policy on businesses (owner_id = auth.uid()) is exactly right,
