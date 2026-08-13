@@ -9,7 +9,7 @@ import {
   Plus,
   Search,
   Sparkles,
-  Stethoscope,
+  CarFront,
   Trash2,
 } from 'lucide-react'
 
@@ -170,10 +170,10 @@ function ServicesHeader({
           <SectionEyebrow>Services</SectionEyebrow>
           <div className="mt-4">
             <h2 className="font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">
-              Healthcare services catalog
+              DriveIA mobility services catalog
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
-              Manage the services Clara can book, discuss, and surface inside the clinic workflow.
+              Manage the services DriveIA can book, discuss, and surface inside the vehicle workflow.
             </p>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -184,7 +184,7 @@ function ServicesHeader({
               {activeCount} active now
             </Badge>
             <Badge tone="blue" className="bg-[rgba(14,165,233,0.08)] normal-case tracking-normal">
-              73 catalog templates
+              Mobility templates
             </Badge>
           </div>
         </div>
@@ -220,7 +220,7 @@ function ServiceRow({
             color: accent,
           }}
         >
-          <Stethoscope className="h-4 w-4" />
+          <CarFront className="h-4 w-4" />
         </div>
 
         <div className="min-w-0 flex-1">
@@ -365,7 +365,7 @@ function ServiceFormDialog({
       onSaved(saved)
       pushToast({
         title: mode === 'create' ? 'Service added' : 'Service updated',
-        message: `${saved.name} is ready in your clinic catalog.`,
+        message: `${saved.name} is ready in your DriveIA catalog.`,
         tone: 'emerald',
       })
       onClose()
@@ -400,7 +400,7 @@ function ServiceFormDialog({
           label="Description"
           value={form.description}
           onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
-          placeholder="Brief description for patients and Clara."
+          placeholder="Brief description for shoppers, drivers, and DriveIA."
         />
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -451,7 +451,7 @@ function ServiceFormDialog({
           </div>
         ) : form.priceMode === 'contact' ? (
           <div className="rounded-[22px] border border-[var(--border-soft)] bg-[rgba(15,118,110,0.04)] px-4 py-3 text-sm text-[var(--text-muted)]">
-            The price will be hidden and patients will see a contact-for-price prompt.
+            The price will be hidden and customers will see a contact-for-price prompt.
           </div>
         ) : (
           <Input
@@ -780,7 +780,7 @@ export function ServicesManager({
     setSelectedTemplateKeys((current) => current.filter((key) => key !== normalizeServiceKey(service.name)))
     pushToast({
       title: 'Servicio desactivado',
-      message: `${service.name} ahora esta inactivo y oculto de los flujos activos de reserva.`,
+      message: `${service.name} ahora está inactivo y oculto de los flujos activos de venta.`,
       tone: 'slate',
     })
   }
@@ -878,7 +878,7 @@ export function ServicesManager({
       <SurfaceCard className="overflow-hidden">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border-soft)] px-5 py-5">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Healthcare Services</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">DriveIA Services</div>
             <h3 className="mt-1 text-2xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
               {topSubtitle}
             </h3>
@@ -898,7 +898,7 @@ export function ServicesManager({
                 </div>
                 <h4 className="mt-4 text-lg font-semibold text-[var(--text-strong)]">No services yet</h4>
                 <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-                  Add a custom service or choose from the catalog below to start building the booking flow.
+                  Add a custom service or choose from the catalog below to start building the sales and rental flow.
                 </p>
                 <Button onClick={openCreate} className="mt-5 gap-2">
                   <Plus className="h-4 w-4" />
@@ -925,10 +925,10 @@ export function ServicesManager({
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Service Catalog</div>
               <h3 className="mt-1 text-2xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
-                73 services across 13 specialties
+                Mobility services across sales, rental, finance, and service
               </h3>
               <p className="mt-2 text-sm leading-7 text-[var(--text-muted)]">
-                Click cards to select services, then add them to your clinic catalog in one batch.
+                Click cards to select services, then add them to your DriveIA catalog in one batch.
               </p>
             </div>
 

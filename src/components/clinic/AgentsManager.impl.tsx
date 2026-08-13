@@ -13,7 +13,7 @@ import {
   Plus,
   Play,
   Sparkles,
-  Stethoscope,
+  CarFront,
   Trash2,
   WandSparkles,
 } from 'lucide-react'
@@ -151,8 +151,8 @@ function createWizardSeed(agent: AiAgent | null, template: AgentTemplate | null)
 
   return {
     name: '',
-    title: 'Front Desk Receptionist',
-    specialty: 'General Practice',
+    title: 'Sales Concierge',
+    specialty: 'Sales & Inventory',
     voice: 'nova',
     personality: 'Professional',
     sensitivity: 'balanced',
@@ -372,7 +372,7 @@ function AgentWizardModal({
       onSaved(saved)
       pushToast({
         title: mode === 'create' ? 'Agent created' : 'Agent updated',
-        message: `${saved.name} is ready for booking and follow-up work.`,
+        message: `${saved.name} is ready for lead handling and follow-up work.`,
         tone: 'emerald',
       })
       onClose()
@@ -430,7 +430,7 @@ function AgentWizardModal({
                 label="Agent Name"
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-                placeholder="Clara - General Receptionist"
+                placeholder="Atlas - Sales Concierge"
               />
               <Select
                 label="Voice"
@@ -847,14 +847,14 @@ export function AgentsManager({
     },
     {
       all: AGENT_TEMPLATES.length,
-      'general-practice': 0,
-      'mental-health': 0,
-      pediatrics: 0,
-      'urgent-care': 0,
-      dental: 0,
-      telehealth: 0,
-      specialist: 0,
-      'chronic-care': 0,
+      'sales-inventory': 0,
+      'test-drives': 0,
+      rentals: 0,
+      financing: 0,
+      'trade-ins': 0,
+      'fleet-corporate': 0,
+      'service-maintenance': 0,
+      'protection-plans': 0,
     },
   )
 
@@ -914,7 +914,7 @@ export function AgentsManager({
     setAgents((current) => current.filter((item) => item.id !== agent.id))
     pushToast({
       title: 'Agent deleted',
-      message: `${agent.name} has been removed from the clinic.`,
+      message: `${agent.name} has been removed from the DriveIA stack.`,
       tone: 'slate',
     })
   }
@@ -932,7 +932,7 @@ export function AgentsManager({
       <SectionHeading
         eyebrow={<SectionEyebrow>AI Agents</SectionEyebrow>}
         title="Agents, templates, and live testing"
-        description="Build and activate the front-desk, triage, and specialist voice agents your clinic uses on the website and over the phone."
+        description="Build and activate the sales, rental, finance, and service voice agents DriveIA uses on the website and over the phone."
         actions={
           <Button onClick={() => openCreate()} className="inline-flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -942,13 +942,13 @@ export function AgentsManager({
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Live Agents" value={String(liveAgents.length)} delta="Handling patient calls" icon={Bot} tone="teal" />
+        <MetricCard label="Live Agents" value={String(liveAgents.length)} delta="Handling vehicle leads" icon={Bot} tone="teal" />
         <MetricCard label="Templates" value={String(AGENT_TEMPLATES.length)} delta="Ready to activate" icon={Sparkles} tone="blue" />
         <MetricCard
           label="Assigned Services"
           value={String(uniqueAssignedServiceCount)}
           delta={`${services.filter((service) => service.active).length} active services`}
-          icon={Stethoscope}
+          icon={CarFront}
           tone="emerald"
         />
         <MetricCard label="Calls Handled" value={String(totalCallsHandled)} delta="Across all agents" icon={Activity} tone="amber" />
@@ -959,7 +959,7 @@ export function AgentsManager({
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Active AI Agents</div>
             <h2 className="mt-1 text-2xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
-              The clinic voice stack that answers, books, and follows up
+              The DriveIA voice stack that answers, qualifies, and follows up
             </h2>
           </div>
           <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
@@ -1011,7 +1011,7 @@ export function AgentsManager({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <SectionEyebrow>AI Agent Templates</SectionEyebrow>
-          <div className="mt-3 text-sm text-[var(--text-muted)]">Choose a specialist and activate it in one click.</div>
+          <div className="mt-3 text-sm text-[var(--text-muted)]">Choose a mobility specialist and activate it in one click.</div>
         </div>
         <Badge tone="slate" className="bg-white/90 normal-case tracking-normal">
           {AGENT_TEMPLATES.length} agents available

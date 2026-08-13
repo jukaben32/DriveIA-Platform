@@ -233,8 +233,8 @@ export async function createBusiness(
   }
   if (!business) throw lastError
 
-  const defaultAgentName = `${toTitleCase(input.name)} Assistant`
-  const defaultPrompt = `You are Clara, the AI medical receptionist for ${input.name}. Help patients book appointments, answer FAQs, and follow the clinic scheduling rules. Be concise, empathetic, and safe.`
+  const defaultAgentName = `${toTitleCase(input.name)} Mobility Concierge`
+  const defaultPrompt = `You are the AI mobility concierge for ${input.name}. Help customers explore inventory, compare vehicles, check rental availability, schedule test drives, request trade-in estimates, and answer dealership or rental FAQs. Be concise, persuasive, and safe.`
 
   const [{ error: subscriptionError }, { error: memberError }, { data: agentData, error: agentError }] = await Promise.all([
     supabase.from('business_subscriptions').insert({
@@ -253,9 +253,9 @@ export async function createBusiness(
       .from('ai_agents')
       .insert({
         business_id: business.id,
-        name: 'Clara',
+        name: 'Atlas',
         title: defaultAgentName,
-        specialty: input.specialty ?? 'General Practice',
+        specialty: input.specialty ?? 'Dealership & Rentals',
         voice: 'alloy',
         personality: 'friendly',
         sensitivity: 0.55,
@@ -277,42 +277,55 @@ export async function createBusiness(
   const serviceRows = [
     {
       business_id: business.id,
-      name: 'General Consultation',
-      description: 'Initial consultation for new or existing patients.',
+      name: 'Vehicle Sales Consultation',
+      description: 'Guided consultation for new or pre-owned vehicle shoppers.',
       duration_minutes: 30,
       price_type: 'fixed',
       price: 99,
       currency: DEFAULT_CURRENCY,
       active: true,
       color: '#0f766e',
-      instructions: 'Collect symptoms, reason for visit, and preferred dates.',
+      instructions: 'Collect budget, preferred body type, must-have features, and desired timeline.',
       sort_order: 0,
     },
     {
       business_id: business.id,
-      name: 'Follow Up Visit',
-      description: 'Short follow-up to review treatment progress.',
-      duration_minutes: 15,
+      name: 'Test Drive Booking',
+      description: 'Reserve a test drive and confirm vehicle, time, and driver details.',
+      duration_minutes: 20,
       price_type: 'fixed',
       price: 49,
       currency: DEFAULT_CURRENCY,
       active: true,
       color: '#0ea5e9',
-      instructions: 'Ask whether anything changed since the last visit.',
+      instructions: 'Confirm the model, preferred day, driver license requirements, and dealership location.',
       sort_order: 1,
     },
     {
       business_id: business.id,
-      name: 'Specialist Review',
-      description: 'Extended review with a specialist provider.',
-      duration_minutes: 50,
+      name: 'Rental Reservation',
+      description: 'Vehicle rental booking with pickup, return, and availability details.',
+      duration_minutes: 25,
       price_type: 'starting_at',
       price: 149,
       currency: DEFAULT_CURRENCY,
       active: true,
       color: '#8b5cf6',
-      instructions: 'Ask for referral details and any prior test results.',
+      instructions: 'Collect travel dates, pickup location, vehicle class, mileage needs, and insurance coverage.',
       sort_order: 2,
+    },
+    {
+      business_id: business.id,
+      name: 'Trade-In Appraisal',
+      description: 'Quick valuation for customers looking to sell or trade their current vehicle.',
+      duration_minutes: 20,
+      price_type: 'fixed',
+      price: 39,
+      currency: DEFAULT_CURRENCY,
+      active: true,
+      color: '#ea580c',
+      instructions: 'Ask for year, make, model, mileage, condition, and whether the customer wants to buy or sell.',
+      sort_order: 3,
     },
   ]
 
@@ -356,23 +369,24 @@ export async function createBusiness(
       secondary_color: DEFAULT_SECONDARY_COLOR,
       font: DEFAULT_SITE_FONT,
       site_title: input.name,
-      site_description: input.description || `Book appointments with ${input.name}.`,
-      hero_headline: 'Advanced care you can trust',
-      hero_subheadline: 'Schedule appointments in seconds and let Clara handle the follow-up.',
-      cta_primary_text: 'Book Appointment',
-      cta_secondary_text: 'View Services',
-      about_title: 'About the clinic',
-      about_story: input.description || null,
-      footer_tagline: 'Powered by Clara AI',
+      site_description: input.description || `Browse vehicles and reserve rentals with ${input.name}.`,
+      hero_headline: 'Find your next ride, fast.',
+      hero_subheadline: 'Explore inventory, book a test drive, reserve a rental, and let DriveIA handle the follow-up.',
+      cta_primary_text: 'Book Test Drive',
+      cta_secondary_text: 'Browse Inventory',
+      about_title: 'About the dealership',
+      about_story:
+        input.description || 'Our team helps customers compare vehicles, reserve rentals, and move through the buying or booking process with confidence.',
+      footer_tagline: 'Powered by DriveIA',
       footer_copyright: `Copyright ${new Date().getFullYear()} ${input.name}`,
       contact_phone: input.phone ?? null,
       contact_email: input.contactEmail ?? null,
       contact_address: null,
-      contact_hours: 'Mon - Fri, 9:00 AM - 5:00 PM',
-      years_experience: 20,
-      patients_served: 12000,
-      satisfaction_pct: 98.6,
-      trust_badges: ['Board Certified', 'Patient Centered', '24/7 AI Reception'],
+      contact_hours: 'Mon - Sat, 9:00 AM - 6:00 PM',
+      years_experience: 18,
+      patients_served: 8400,
+      satisfaction_pct: 97.8,
+      trust_badges: ['Certified inventory', 'Flexible rentals', 'Fast approvals'],
       featured_service_ids: [],
     }),
   ]

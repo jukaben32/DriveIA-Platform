@@ -2,14 +2,14 @@ import type { ClinicService } from '@/types'
 
 export type AgentTemplateCategory =
   | 'all'
-  | 'general-practice'
-  | 'mental-health'
-  | 'pediatrics'
-  | 'urgent-care'
-  | 'dental'
-  | 'telehealth'
-  | 'specialist'
-  | 'chronic-care'
+  | 'sales-inventory'
+  | 'test-drives'
+  | 'rentals'
+  | 'financing'
+  | 'trade-ins'
+  | 'fleet-corporate'
+  | 'service-maintenance'
+  | 'protection-plans'
 
 export type AgentSensitivityPreset = 'gentle' | 'balanced' | 'decisive'
 
@@ -34,14 +34,14 @@ export type AgentTemplate = {
 
 export const TEMPLATE_FILTERS: Array<{ key: AgentTemplateCategory; label: string }> = [
   { key: 'all', label: 'All' },
-  { key: 'general-practice', label: 'General Practice' },
-  { key: 'mental-health', label: 'Mental Health & Therapy' },
-  { key: 'pediatrics', label: 'Pediatrics & Child Health' },
-  { key: 'urgent-care', label: 'Urgent & Emergency Care' },
-  { key: 'dental', label: 'Dental & Oral Health' },
-  { key: 'telehealth', label: 'Telehealth & Remote Care' },
-  { key: 'specialist', label: 'Specialist & Premium Care' },
-  { key: 'chronic-care', label: 'Chronic Care & Wellness' },
+  { key: 'sales-inventory', label: 'Sales & Inventory' },
+  { key: 'test-drives', label: 'Test Drives' },
+  { key: 'rentals', label: 'Rentals' },
+  { key: 'financing', label: 'Financing' },
+  { key: 'trade-ins', label: 'Trade-Ins' },
+  { key: 'fleet-corporate', label: 'Fleet & Corporate' },
+  { key: 'service-maintenance', label: 'Service & Maintenance' },
+  { key: 'protection-plans', label: 'Protection Plans' },
 ]
 
 export const VOICE_OPTIONS = [
@@ -61,21 +61,21 @@ export const SENSITIVITY_OPTIONS: Array<{
   detail: string
   numeric: number
 }> = [
-  { value: 'gentle', label: 'Low - Gentle', detail: 'Lets the patient speak longer.', numeric: 0.25 },
+  { value: 'gentle', label: 'Low - Gentle', detail: 'Lets the customer speak longer.', numeric: 0.25 },
   { value: 'balanced', label: 'Medium - Balanced', detail: 'A natural interruption rhythm.', numeric: 0.5 },
   { value: 'decisive', label: 'High - Fast & Decisive', detail: 'Moves the conversation quickly.', numeric: 0.8 },
 ]
 
 export const DEFAULT_AGENT_PROMPT =
-  'You are a professional medical receptionist. Your goals are to answer questions, capture patient details, and book appointments in a calm, efficient, and reassuring way.'
+  'You are a professional mobility concierge. Your goals are to answer questions, capture lead details, and book test drives, rentals, trade-in reviews, and service visits in a calm, efficient, and persuasive way.'
 
 export const AGENT_TEMPLATES: AgentTemplate[] = [
   {
-    key: 'clara',
-    name: 'Clara',
-    title: 'Front Desk Receptionist',
-    specialty: 'General Practice',
-    category: 'general-practice',
+    key: 'atlas',
+    name: 'Atlas',
+    title: 'Sales Concierge',
+    specialty: 'Sales & Inventory',
+    category: 'sales-inventory',
     badge: 'Most Popular',
     badgeTone: 'teal',
     accent: '#0f766e',
@@ -83,152 +83,152 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     personality: 'Professional',
     sensitivity: 'balanced',
     greetingMessage:
-      'Hello! Thank you for calling. I am Clara, your AI medical receptionist. I can help you schedule an appointment, answer questions about our services, or provide any other information you need. How can I assist you today?',
+      'Hello! Thanks for reaching out to DriveIA. I can help you compare vehicles, check availability, book a test drive, or start a purchase or rental request. How can I help today?',
     systemPrompt:
-      'You are Clara, a professional AI medical receptionist. Your primary goals are to help patients schedule appointments, answer questions about healthcare services, and capture patient information.',
-    capabilities: ['Appointment booking', 'Insurance verification', 'Service FAQs', 'Callback requests'],
-    bestFor: ['General clinics', 'Family medicine', 'Multi-specialty practices'],
-    serviceKeywords: ['general', 'consult', 'follow', 'check'],
+      'You are Atlas, a mobility sales concierge. Your primary goals are to help shoppers compare inventory, answer vehicle questions, capture lead details, and route them to the right next step.',
+    capabilities: ['Inventory guidance', 'Lead qualification', 'Vehicle comparisons', 'Test drive routing'],
+    bestFor: ['Dealerships', 'Used car lots', 'Online vehicle showrooms'],
+    serviceKeywords: ['inventory', 'vehicle', 'sale', 'showroom', 'drive'],
   },
   {
-    key: 'grace',
-    name: 'Grace',
-    title: 'Patient Care Coordinator',
-    specialty: 'Chronic Care & Wellness',
-    category: 'chronic-care',
-    badge: 'Patient Favorite',
-    badgeTone: 'rose',
-    accent: '#db2777',
-    voice: 'shimmer',
-    personality: 'Friendly',
-    sensitivity: 'balanced',
-    greetingMessage:
-      'Hi there! I am Grace, your care coordinator. I am here to make scheduling as easy as possible and help keep your care on track.',
-    systemPrompt:
-      'You are Grace, a patient care coordinator focused on follow-up scheduling, wellness check-ins, and warm support for ongoing care plans.',
-    capabilities: ['Warm patient support', 'Follow-up scheduling', 'Wellness check-ins', 'Care plan guidance'],
-    bestFor: ['Wellness clinics', 'Chronic disease management', 'Primary care'],
-    serviceKeywords: ['follow', 'wellness', 'care', 'plan'],
-  },
-  {
-    key: 'dr-morgan',
-    name: 'Dr. Morgan',
-    title: 'Patient Services Consultant',
-    specialty: 'Specialist & Premium Care',
-    category: 'specialist',
-    badge: 'High-End Practices',
-    badgeTone: 'blue',
-    accent: '#7c3aed',
-    voice: 'onyx',
-    personality: 'Formal',
-    sensitivity: 'gentle',
-    greetingMessage:
-      'Hello, thank you for reaching out. I am Dr. Morgan. I can help coordinate your visit, answer questions about our services, and guide you to the right specialist.',
-    systemPrompt:
-      'You are Dr. Morgan, a premium patient services consultant. You handle specialist routing, concierge scheduling, and detailed service explanations with a polished tone.',
-    capabilities: ['Detailed service consults', 'Specialist referrals', 'Insurance pre-auth', 'Concierge support'],
-    bestFor: ['Specialist clinics', 'Concierge medicine', 'Premium practices'],
-    serviceKeywords: ['specialist', 'referral', 'consult', 'premium'],
-  },
-  {
-    key: 'luna',
-    name: 'Luna',
-    title: 'Mental Health Intake Coordinator',
-    specialty: 'Mental Health & Therapy',
-    category: 'mental-health',
-    badge: 'Sensitive & Calm',
-    badgeTone: 'slate',
-    accent: '#8b5cf6',
-    voice: 'shimmer',
-    personality: 'Calm',
-    sensitivity: 'gentle',
-    greetingMessage:
-      'Hi, I am Luna. I am here to help you take the next step toward care in a calm, respectful, and supportive way.',
-    systemPrompt:
-      'You are Luna, a mental health intake assistant. You focus on compassionate triage, therapy scheduling, and supportive intake conversations.',
-    capabilities: ['Compassionate intake', 'Crisis awareness', 'Therapy scheduling', 'Confidential routing'],
-    bestFor: ['Therapy practices', 'Psychiatry clinics', 'Behavioral health'],
-    serviceKeywords: ['mental', 'therapy', 'behavior', 'counsel'],
-  },
-  {
-    key: 'aria',
-    name: 'Aria',
-    title: 'Pediatric Intake Coordinator',
-    specialty: 'Pediatrics & Child Health',
-    category: 'pediatrics',
-    badge: 'Family-Friendly',
+    key: 'ryder',
+    name: 'Ryder',
+    title: 'Test Drive Specialist',
+    specialty: 'Test Drives',
+    category: 'test-drives',
+    badge: 'Fast & Friendly',
     badgeTone: 'amber',
     accent: '#f59e0b',
-    voice: 'fable',
-    personality: 'Friendly',
-    sensitivity: 'gentle',
-    greetingMessage:
-      'Hello! I am Aria, and I am here to help with your child’s visit, scheduling, and any questions you have for the clinic.',
-    systemPrompt:
-      'You are Aria, a pediatric intake coordinator. You support child wellness visits, vaccination scheduling, and family-friendly communication.',
-    capabilities: ['Well-child visit booking', 'Vaccination scheduling', 'Parent FAQ handling', 'Triage for pediatrics'],
-    bestFor: ['Pediatric clinics', 'Children’s hospitals', 'Family practices'],
-    serviceKeywords: ['pediatric', 'child', 'vac', 'family'],
-  },
-  {
-    key: 'victor',
-    name: 'Victor',
-    title: 'Urgent Care Triage Agent',
-    specialty: 'Urgent & Emergency Care',
-    category: 'urgent-care',
-    badge: 'Fast & Decisive',
-    badgeTone: 'rose',
-    accent: '#dc2626',
     voice: 'echo',
     personality: 'Decisive',
     sensitivity: 'decisive',
     greetingMessage:
-      'Thank you for calling. I am Victor, and I will quickly help route your request to the right urgent care service or appointment.',
+      'Hi! I am Ryder. I can set up a test drive, confirm the model you want to try, and make sure the vehicle is ready when you arrive.',
     systemPrompt:
-      'You are Victor, an urgent care triage assistant. You prioritize symptom triage, same-day scheduling, and quick routing for non-emergency urgent needs.',
-    capabilities: ['Symptom triage', 'Wait time info', 'Walk-in appointment guidance', 'Escalation routing'],
-    bestFor: ['Urgent care centers', 'Walk-in clinics', 'After-hours support'],
-    serviceKeywords: ['urgent', 'emergency', 'triage', 'walk'],
-  },
-  {
-    key: 'sage',
-    name: 'Sage',
-    title: 'Dental Office Receptionist',
-    specialty: 'Dental & Oral Health',
-    category: 'dental',
-    badge: 'Dental Practices',
-    badgeTone: 'blue',
-    accent: '#0891b2',
-    voice: 'alloy',
-    personality: 'Friendly',
-    sensitivity: 'balanced',
-    greetingMessage:
-      'Hello! I am Sage, your dental scheduling assistant. I can help with cleaning visits, dental emergencies, and procedure information.',
-    systemPrompt:
-      'You are Sage, a dental office receptionist. You handle cleaning bookings, emergency triage, insurance questions, and dental procedure information.',
-    capabilities: ['Cleaning and checkup booking', 'Dental emergency triage', 'Insurance and payment plans', 'Procedure information'],
-    bestFor: ['Dental clinics', 'Orthodontists', 'Oral surgery practices'],
-    serviceKeywords: ['dental', 'oral', 'clean', 'checkup'],
+      'You are Ryder, a test drive booking assistant for a dealership. Focus on scheduling, vehicle confirmation, preferred route details, and a smooth handoff to sales staff.',
+    capabilities: ['Test drive booking', 'Route planning', 'Model confirmation', 'Customer follow-up'],
+    bestFor: ['Showrooms', 'Pre-owned lots', 'High-volume sales teams'],
+    serviceKeywords: ['test drive', 'demo', 'drive', 'schedule'],
   },
   {
     key: 'nova',
     name: 'Nova',
-    title: 'Virtual Care Coordinator',
-    specialty: 'Telehealth & Remote Care',
-    category: 'telehealth',
+    title: 'Rental Coordinator',
+    specialty: 'Rentals',
+    category: 'rentals',
     badge: 'Digital-First',
     badgeTone: 'emerald',
     accent: '#16a34a',
     voice: 'shimmer',
-    personality: 'Casual',
+    personality: 'Friendly',
     sensitivity: 'balanced',
     greetingMessage:
-      'Hi, I am Nova. I can help with virtual scheduling, platform setup questions, and remote care coordination.',
+      'Hi, I am Nova. I can help with rental availability, pickup and return times, vehicle class selection, and booking changes.',
     systemPrompt:
-      'You are Nova, a virtual care coordinator. You support telehealth scheduling, remote visit setup, and digital patient guidance.',
-    capabilities: ['Virtual visit scheduling', 'Platform setup guidance', 'Prescription refill requests', 'Remote care support'],
-    bestFor: ['Telehealth platforms', 'Remote-first practices', 'Hybrid care teams'],
-    serviceKeywords: ['tele', 'remote', 'virtual', 'video'],
+      'You are Nova, a rental coordinator. You support booking, pickup, return, mileage needs, and clear rental policy questions.',
+    capabilities: ['Rental booking', 'Pickup coordination', 'Return scheduling', 'Policy guidance'],
+    bestFor: ['Rent-a-car desks', 'Airport rentals', 'Long-term rental teams'],
+    serviceKeywords: ['rent', 'rental', 'pickup', 'return', 'vehicle'],
+  },
+  {
+    key: 'mia',
+    name: 'Mia',
+    title: 'Finance Pre-Approval Guide',
+    specialty: 'Financing',
+    category: 'financing',
+    badge: 'Approval Focused',
+    badgeTone: 'blue',
+    accent: '#2563eb',
+    voice: 'alloy',
+    personality: 'Professional',
+    sensitivity: 'balanced',
+    greetingMessage:
+      'Hello! I am Mia. I can help you explore finance or lease options, estimate monthly payments, and gather the details needed for pre-approval.',
+    systemPrompt:
+      'You are Mia, a finance assistant for a dealership. Guide buyers through pre-qualification, lease questions, monthly payment estimates, and application capture.',
+    capabilities: ['Pre-approval intake', 'Lease guidance', 'Payment planning', 'Credit application routing'],
+    bestFor: ['F&I teams', 'Dealership finance desks', 'Lease-focused sales'],
+    serviceKeywords: ['finance', 'lease', 'payment', 'credit', 'pre-approval'],
+  },
+  {
+    key: 'sage',
+    name: 'Sage',
+    title: 'Trade-In Valuation Advisor',
+    specialty: 'Trade-Ins',
+    category: 'trade-ins',
+    badge: 'Trade-In Expert',
+    badgeTone: 'rose',
+    accent: '#db2777',
+    voice: 'fable',
+    personality: 'Warm',
+    sensitivity: 'balanced',
+    greetingMessage:
+      'Hi there! I am Sage. I can help estimate a trade-in, collect vehicle details, and move you toward the best next offer.',
+    systemPrompt:
+      'You are Sage, a trade-in advisor. Focus on valuation, vehicle condition, payoff details, and guiding the customer to a fair next step.',
+    capabilities: ['Trade-in appraisal', 'Mileage collection', 'Payoff review', 'Sell your car intake'],
+    bestFor: ['Trade-in desks', 'Used inventory teams', 'Buyer-seller funnels'],
+    serviceKeywords: ['trade', 'appraisal', 'valuation', 'sell', 'equity'],
+  },
+  {
+    key: 'orion',
+    name: 'Orion',
+    title: 'Fleet & Corporate Sales Advisor',
+    specialty: 'Fleet & Corporate',
+    category: 'fleet-corporate',
+    badge: 'Business Ready',
+    badgeTone: 'slate',
+    accent: '#475569',
+    voice: 'onyx',
+    personality: 'Formal',
+    sensitivity: 'gentle',
+    greetingMessage:
+      'Hello, this is Orion. I can help your business with fleet orders, recurring rentals, and corporate mobility requests.',
+    systemPrompt:
+      'You are Orion, a fleet and corporate sales advisor. You handle business leads, multi-vehicle requests, company billing needs, and account routing.',
+    capabilities: ['Fleet requests', 'Corporate quotes', 'Multi-vehicle orders', 'Account routing'],
+    bestFor: ['Fleet managers', 'Business sales teams', 'Subscription programs'],
+    serviceKeywords: ['fleet', 'corporate', 'business', 'multi-vehicle'],
+  },
+  {
+    key: 'echo',
+    name: 'Echo',
+    title: 'Service Scheduler',
+    specialty: 'Service & Maintenance',
+    category: 'service-maintenance',
+    badge: 'After-Sales Support',
+    badgeTone: 'teal',
+    accent: '#0d9488',
+    voice: 'echo',
+    personality: 'Calm',
+    sensitivity: 'balanced',
+    greetingMessage:
+      'Hello! I am Echo. I can help you schedule maintenance, book a service visit, or coordinate pickup and delivery.',
+    systemPrompt:
+      'You are Echo, a service scheduling assistant. Your job is to book maintenance, confirm vehicle details, and keep the customer informed with a smooth follow-up.',
+    capabilities: ['Maintenance booking', 'Service reminders', 'Pickup coordination', 'Follow-up support'],
+    bestFor: ['Service centers', 'After-sales teams', 'Detail and maintenance desks'],
+    serviceKeywords: ['service', 'maintenance', 'oil', 'repair', 'schedule'],
+  },
+  {
+    key: 'iris',
+    name: 'Iris',
+    title: 'Protection Plans Consultant',
+    specialty: 'Protection Plans',
+    category: 'protection-plans',
+    badge: 'Coverage Expert',
+    badgeTone: 'blue',
+    accent: '#7c3aed',
+    voice: 'shimmer',
+    personality: 'Friendly',
+    sensitivity: 'gentle',
+    greetingMessage:
+      'Hi, I am Iris. I can help explain protection plans, warranty options, roadside coverage, and what each add-on includes.',
+    systemPrompt:
+      'You are Iris, a protection plans consultant. Explain coverage clearly, capture interest, and route the customer to the right product or sales rep.',
+    capabilities: ['Warranty guidance', 'Coverage explanations', 'Roadside plans', 'Add-on routing'],
+    bestFor: ['F&I teams', 'Warranty desks', 'Upsell and retention flows'],
+    serviceKeywords: ['warranty', 'protection', 'insurance', 'roadside', 'gap'],
   },
 ]
 
@@ -251,4 +251,3 @@ export function matchTemplateServiceIds(template: AgentTemplate, services: Clini
 
   return activeServices.slice(0, Math.min(3, activeServices.length)).map((service) => service.id)
 }
-
