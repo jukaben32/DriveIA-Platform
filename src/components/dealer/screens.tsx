@@ -956,7 +956,7 @@ export function PortalSupportScreen() {
         </div>
         <div className="mt-5 space-y-3">
           <div className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">I need to move my appointment to later this week.</div>
-          <div className="ml-auto max-w-[85%] rounded-2xl bg-teal-500 px-4 py-3 text-sm text-white">Of course. I can help with that right now.</div>
+          <div className="ml-auto max-w-[85%] rounded-2xl bg-[var(--brand)] px-4 py-3 text-sm text-white">Of course. I can help with that right now.</div>
         </div>
       </SurfaceCard>
     </div>
@@ -1001,7 +1001,7 @@ export function WidgetDemoScreen() {
 
         <SurfaceCard className="p-6">
           <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Script snippet</div>
-          <pre className="mt-4 overflow-auto rounded-[24px] bg-slate-950 p-5 text-[11px] leading-6 text-teal-100">
+          <pre className="mt-4 overflow-auto rounded-[24px] bg-slate-950 p-5 text-[11px] leading-6 text-[var(--brand-100)]">
 {`<script src="http://localhost:3000/widget-script.js"></script>
 <script>
   window.ClaraWidget.init({
