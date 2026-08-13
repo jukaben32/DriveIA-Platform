@@ -2,13 +2,13 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { Car, CarFront, Gauge, Hash, MapPin, Search, Sparkles } from 'lucide-react'
 import { SurfaceCard } from '@/components/dealer/shared'
-import type { Vehicle, Website } from '@/types'
+import type { PublicVehicle, Website } from '@/types'
 
 type StyleTokens = { bg: string; cardBg: string; text: string; subtext: string; border: string; heroBg: string }
 
 type SearchMode = 'sale' | 'rental'
 
-const BODY_TYPE_OPTIONS: Array<{ value: Vehicle['bodyType']; label: string }> = [
+const BODY_TYPE_OPTIONS: Array<{ value: PublicVehicle['bodyType']; label: string }> = [
   { value: 'sedan', label: 'Sedán' },
   { value: 'hatchback', label: 'Compacto' },
   { value: 'suv', label: 'Jeepeta' },
@@ -24,7 +24,7 @@ function distinct(values: Array<string | null | undefined>) {
   return Array.from(new Set(values.filter((value): value is string => Boolean(value && value.trim())))).sort()
 }
 
-function formatPrice(vehicle: Vehicle, mode: SearchMode) {
+function formatPrice(vehicle: PublicVehicle, mode: SearchMode) {
   if (mode === 'rental') {
     return vehicle.rentalDailyRate != null ? `$${vehicle.rentalDailyRate.toLocaleString()}/día` : 'Consultar precio'
   }
@@ -37,14 +37,14 @@ export function VehicleFinder({
   website,
   style,
 }: {
-  vehicles: Vehicle[]
-  highlightedVehicles: Vehicle[]
+  vehicles: PublicVehicle[]
+  highlightedVehicles: PublicVehicle[]
   website: Website
   style: StyleTokens
 }) {
   const [mode, setMode] = useState<SearchMode>('sale')
-  const [condition, setCondition] = useState<'all' | Vehicle['condition']>('all')
-  const [bodyType, setBodyType] = useState<'all' | Vehicle['bodyType']>('all')
+  const [condition, setCondition] = useState<'all' | PublicVehicle['condition']>('all')
+  const [bodyType, setBodyType] = useState<'all' | PublicVehicle['bodyType']>('all')
   const [make, setMake] = useState('')
   const [model, setModel] = useState('')
   const [yearMin, setYearMin] = useState('')
@@ -95,7 +95,7 @@ export function VehicleFinder({
     setHasSearched(true)
   }
 
-  function handleBodyTypeClick(value: 'all' | Vehicle['bodyType']) {
+  function handleBodyTypeClick(value: 'all' | PublicVehicle['bodyType']) {
     setBodyType(value)
     setHasSearched(true)
   }

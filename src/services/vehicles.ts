@@ -1,7 +1,7 @@
-import type { Vehicle } from '@/types'
+import type { PublicVehicle, Vehicle } from '@/types'
 import type { DbClient } from './_shared'
 
-function toVehicle(row: any): Vehicle {
+function toPublicVehicle(row: any): PublicVehicle {
   return {
     id: row.id,
     businessId: row.business_id,
@@ -35,6 +35,20 @@ function toVehicle(row: any): Vehicle {
   }
 }
 
+// Full internal shape — includes third-party ownership and commission
+// fields. Only for dealer dashboard use (see toPublicVehicle for anything
+// the AI agent or the public website reads).
+function toVehicle(row: any): Vehicle {
+  return {
+    ...toPublicVehicle(row),
+    ownershipType: row.ownership_type ?? 'dealer_owned',
+    ownerName: row.owner_name ?? null,
+    ownerContact: row.owner_contact ?? null,
+    ownerIdNumber: row.owner_id_number ?? null,
+    commissionPct: row.commission_pct ?? null,
+  }
+}
+
 export type VehicleInput = {
   stockNumber?: string | null
   vin?: string | null
@@ -61,6 +75,11 @@ export type VehicleInput = {
   location?: string | null
   isFeatured?: boolean
   sortOrder?: number
+  ownershipType?: Vehicle['ownershipType']
+  ownerName?: string | null
+  ownerContact?: string | null
+  ownerIdNumber?: string | null
+  commissionPct?: number | null
 }
 
 export async function listVehiclesForBusiness(supabase: DbClient, businessId: string) {
@@ -74,6 +93,7 @@ export async function listVehiclesForBusiness(supabase: DbClient, businessId: st
   return (data ?? []).map(toVehicle)
 }
 
+// Feeds the public website (WebsiteContent.availableVehicles) — public-safe shape only.
 export async function listAvailableVehicles(supabase: DbClient, businessId: string) {
   const { data, error } = await supabase
     .from('vehicles')
@@ -83,7 +103,7 @@ export async function listAvailableVehicles(supabase: DbClient, businessId: stri
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
   if (error) throw error
-  return (data ?? []).map(toVehicle)
+  return (data ?? []).map(toPublicVehicle)
 }
 
 export async function searchVehicleInventory(
@@ -116,13 +136,14 @@ export async function searchVehicleInventory(
 
   const { data, error } = await request.order('is_featured', { ascending: false }).order('created_at', { ascending: false }).limit(20)
   if (error) throw error
-  return (data ?? []).map(toVehicle)
+  return (data ?? []).map(toPublicVehicle)
 }
 
+// Used only by the AI agent's get_vehicle_details tool — public-safe shape only.
 export async function getVehicleById(supabase: DbClient, businessId: string, vehicleId: string) {
   const { data, error } = await supabase.from('vehicles').select('*').eq('business_id', businessId).eq('id', vehicleId).maybeSingle()
   if (error) throw error
-  return data ? toVehicle(data) : null
+  return data ? toPublicVehicle(data) : null
 }
 
 export async function createVehicle(supabase: DbClient, businessId: string, input: VehicleInput) {
@@ -155,6 +176,11 @@ export async function createVehicle(supabase: DbClient, businessId: string, inpu
       location: input.location ?? null,
       is_featured: input.isFeatured ?? false,
       sort_order: input.sortOrder ?? 0,
+      ownership_type: input.ownershipType ?? 'dealer_owned',
+      owner_name: input.ownerName ?? null,
+      owner_contact: input.ownerContact ?? null,
+      owner_id_number: input.ownerIdNumber ?? null,
+      commission_pct: input.commissionPct ?? null,
     })
     .select('*')
     .single()
@@ -191,6 +217,11 @@ export async function updateVehicle(supabase: DbClient, businessId: string, vehi
       location: patch.location,
       is_featured: patch.isFeatured,
       sort_order: patch.sortOrder,
+      ownership_type: patch.ownershipType,
+      owner_name: patch.ownerName,
+      owner_contact: patch.ownerContact,
+      owner_id_number: patch.ownerIdNumber,
+      commission_pct: patch.commissionPct,
     })
     .eq('business_id', businessId)
     .eq('id', vehicleId)

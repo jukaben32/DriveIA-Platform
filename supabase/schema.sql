@@ -344,6 +344,15 @@ create table if not exists vehicles (
   location text,
   is_featured boolean not null default false,
   sort_order integer not null default 0,
+  -- Internal-only: who really owns this vehicle and what the dealer earns
+  -- brokering it. Never surfaced to the AI agent or the public website —
+  -- see PublicVehicle / toPublicVehicle on the app side.
+  ownership_type text not null default 'dealer_owned'
+    check (ownership_type in ('dealer_owned', 'consignment')),
+  owner_name text,
+  owner_contact text,
+  owner_id_number text,
+  commission_pct numeric(5,2),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

@@ -82,6 +82,11 @@ function toDealWithRelations(row: any): DealWithRelations {
           location: row.vehicle.location ?? null,
           isFeatured: row.vehicle.is_featured ?? false,
           sortOrder: row.vehicle.sort_order ?? 0,
+          ownershipType: row.vehicle.ownership_type ?? 'dealer_owned',
+          ownerName: row.vehicle.owner_name ?? null,
+          ownerContact: row.vehicle.owner_contact ?? null,
+          ownerIdNumber: row.vehicle.owner_id_number ?? null,
+          commissionPct: row.vehicle.commission_pct ?? null,
           createdAt: row.vehicle.created_at,
           updatedAt: row.vehicle.updated_at,
         }

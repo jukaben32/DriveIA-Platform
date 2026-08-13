@@ -15,7 +15,7 @@ import {
 
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
-import type { Vehicle, VehicleBodyType, VehicleCondition, VehicleFuelType, VehicleListingType, VehicleStatus, VehicleTransmission } from '@/types'
+import type { Vehicle, VehicleBodyType, VehicleCondition, VehicleFuelType, VehicleListingType, VehicleOwnershipType, VehicleStatus, VehicleTransmission } from '@/types'
 import { createVehicle, deleteVehicle, updateVehicle } from '@/services/vehicles'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
@@ -33,6 +33,12 @@ const TRANSMISSIONS: VehicleTransmission[] = ['automatic', 'manual', 'cvt']
 const FUEL_TYPES: VehicleFuelType[] = ['gasoline', 'diesel', 'hybrid', 'electric', 'plug_in_hybrid']
 const LISTING_TYPES: VehicleListingType[] = ['sale', 'rental', 'both']
 const STATUSES: VehicleStatus[] = ['available', 'reserved', 'sold', 'rented', 'in_service', 'archived']
+const OWNERSHIP_TYPES: VehicleOwnershipType[] = ['dealer_owned', 'consignment']
+
+const OWNERSHIP_LABEL: Record<VehicleOwnershipType, string> = {
+  dealer_owned: 'Propio del dealer',
+  consignment: 'Consignación (vehículo de terceros)',
+}
 
 const STATUS_LABEL: Record<VehicleStatus, string> = {
   available: 'Available',
@@ -82,6 +88,11 @@ function emptyForm(): VehicleFormState {
     features: '',
     photoUrls: '',
     isFeatured: false,
+    ownershipType: 'dealer_owned',
+    ownerName: '',
+    ownerContact: '',
+    ownerIdNumber: '',
+    commissionPct: '',
   }
 }
 
@@ -108,6 +119,11 @@ function toForm(vehicle: Vehicle): VehicleFormState {
     features: vehicle.features.join(', '),
     photoUrls: vehicle.photoUrls.join('\n'),
     isFeatured: vehicle.isFeatured,
+    ownershipType: vehicle.ownershipType,
+    ownerName: vehicle.ownerName ?? '',
+    ownerContact: vehicle.ownerContact ?? '',
+    ownerIdNumber: vehicle.ownerIdNumber ?? '',
+    commissionPct: vehicle.commissionPct != null ? String(vehicle.commissionPct) : '',
   }
 }
 
@@ -133,6 +149,11 @@ type VehicleFormState = {
   features: string
   photoUrls: string
   isFeatured: boolean
+  ownershipType: VehicleOwnershipType
+  ownerName: string
+  ownerContact: string
+  ownerIdNumber: string
+  commissionPct: string
 }
 
 export function InventoryManager({ initialVehicles, businessId }: { initialVehicles: Vehicle[]; businessId: string }) {
@@ -227,6 +248,11 @@ export function InventoryManager({ initialVehicles, businessId }: { initialVehic
           .map((item) => item.trim())
           .filter(Boolean),
         isFeatured: form.isFeatured,
+        ownershipType: form.ownershipType,
+        ownerName: form.ownershipType === 'consignment' ? form.ownerName.trim() || null : null,
+        ownerContact: form.ownershipType === 'consignment' ? form.ownerContact.trim() || null : null,
+        ownerIdNumber: form.ownershipType === 'consignment' ? form.ownerIdNumber.trim() || null : null,
+        commissionPct: form.ownershipType === 'consignment' && form.commissionPct ? Number(form.commissionPct) : null,
       }
 
       if (editing) {
@@ -368,6 +394,11 @@ export function InventoryManager({ initialVehicles, businessId }: { initialVehic
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <Badge tone={STATUS_TONE[vehicle.status]}>{STATUS_LABEL[vehicle.status]}</Badge>
                     <Badge tone="slate">{labelize(vehicle.condition)}</Badge>
+                    {vehicle.ownershipType === 'consignment' ? (
+                      <Badge tone="amber" title="Uso interno: no se muestra al cliente">
+                        Consignación{vehicle.commissionPct != null ? ` · ${vehicle.commissionPct}%` : ''}
+                      </Badge>
+                    ) : null}
                   </div>
 
                   <div className="mt-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
@@ -483,6 +514,47 @@ export function InventoryManager({ initialVehicles, businessId }: { initialVehic
           <div className="grid gap-3 sm:grid-cols-2">
             <Input label="Stock number" value={form.stockNumber} onChange={(e) => patch({ stockNumber: e.target.value })} />
             <Input label="VIN" value={form.vin} onChange={(e) => patch({ vin: e.target.value })} />
+          </div>
+
+          <div className="rounded-2xl border border-dashed border-[var(--border-soft)] p-4">
+            <div className="text-sm font-semibold text-[var(--text-strong)]">Uso interno — procedencia del vehículo</div>
+            <p className="mt-1 text-xs text-[var(--text-muted)]">
+              Solo visible en este dashboard. No se muestra en el sitio web público ni lo comunica el asistente de IA.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <Select
+                label="Tipo de propiedad"
+                value={form.ownershipType}
+                onChange={(e) => patch({ ownershipType: e.target.value as VehicleOwnershipType })}
+              >
+                {OWNERSHIP_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {OWNERSHIP_LABEL[type]}
+                  </option>
+                ))}
+              </Select>
+              {form.ownershipType === 'consignment' ? (
+                <Input
+                  label="% de comisión"
+                  type="number"
+                  value={form.commissionPct}
+                  onChange={(e) => patch({ commissionPct: e.target.value })}
+                  placeholder="10"
+                />
+              ) : null}
+            </div>
+            {form.ownershipType === 'consignment' ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Input label="Nombre del propietario" value={form.ownerName} onChange={(e) => patch({ ownerName: e.target.value })} />
+                <Input label="Contacto del propietario" value={form.ownerContact} onChange={(e) => patch({ ownerContact: e.target.value })} placeholder="Teléfono o email" />
+                <Input
+                  label="Número de identificación"
+                  value={form.ownerIdNumber}
+                  onChange={(e) => patch({ ownerIdNumber: e.target.value })}
+                  placeholder="Cédula o documento"
+                />
+              </div>
+            ) : null}
           </div>
 
           <Select label="Status" value={form.status} onChange={(e) => patch({ status: e.target.value as VehicleStatus })}>

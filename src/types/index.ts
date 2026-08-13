@@ -30,6 +30,7 @@ export type VehicleTransmission = 'automatic' | 'manual' | 'cvt'
 export type VehicleFuelType = 'gasoline' | 'diesel' | 'hybrid' | 'electric' | 'plug_in_hybrid'
 export type VehicleListingType = 'sale' | 'rental' | 'both'
 export type VehicleStatus = 'available' | 'reserved' | 'sold' | 'rented' | 'in_service' | 'archived'
+export type VehicleOwnershipType = 'dealer_owned' | 'consignment'
 
 export type DealType = 'sale' | 'rental' | 'lease'
 export type DealStatus = 'open' | 'negotiating' | 'won' | 'lost' | 'cancelled'
@@ -166,9 +167,21 @@ export interface Vehicle {
   location: string | null
   isFeatured: boolean
   sortOrder: number
+  // Internal-only fields: never returned by the AI-facing or public-website
+  // vehicle queries (see PublicVehicle) — dealer dashboard use only.
+  ownershipType: VehicleOwnershipType
+  ownerName: string | null
+  ownerContact: string | null
+  ownerIdNumber: string | null
+  commissionPct: number | null
   createdAt: string
   updatedAt: string
 }
+
+// The subset of Vehicle safe to expose to the AI agent and the public
+// website — excludes third-party ownership and commission details, which
+// are for the dealer's own internal tracking only.
+export type PublicVehicle = Omit<Vehicle, 'ownershipType' | 'ownerName' | 'ownerContact' | 'ownerIdNumber' | 'commissionPct'>
 
 export interface Deal {
   id: string
@@ -428,7 +441,7 @@ export interface WebsiteVehicleHighlight {
   vehicleId: string
   sortOrder: number
   createdAt: string
-  vehicle?: Vehicle | null
+  vehicle?: PublicVehicle | null
 }
 
 export interface WebsiteFaq {
@@ -448,7 +461,7 @@ export interface WebsiteContent {
   highlights: WebsiteHighlight[]
   faqs: WebsiteFaq[]
   vehicleHighlights: WebsiteVehicleHighlight[]
-  availableVehicles: Vehicle[]
+  availableVehicles: PublicVehicle[]
 }
 
 export interface WebsiteSubscriber {
