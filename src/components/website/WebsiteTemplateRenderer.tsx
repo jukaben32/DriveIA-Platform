@@ -24,6 +24,7 @@ import type { ReactNode } from 'react'
 import type { WebsiteContent } from '@/types'
 import { SurfaceCard } from '@/components/dealer/shared'
 import { configuredSocialLinks } from './socialLinks'
+import { VehicleFinder } from './VehicleFinder'
 
 const TEMPLATE_STYLES: Record<
   string,
@@ -194,7 +195,7 @@ export function WebsiteTemplateRenderer({
   content: WebsiteContent
   isEditorPreview?: boolean
 }) {
-  const { website, services, teamMembers, testimonials, highlights, faqs, vehicleHighlights } = content
+  const { website, services, teamMembers, testimonials, highlights, faqs, vehicleHighlights, availableVehicles } = content
   const featuredVehicles = vehicleHighlights.map((item) => item.vehicle).filter((vehicle): vehicle is NonNullable<typeof vehicle> => Boolean(vehicle))
   const style = TEMPLATE_STYLES[website.template] ?? TEMPLATE_STYLES.clarity
   const fontKey = normalizeFont(website.font)
@@ -230,7 +231,7 @@ export function WebsiteTemplateRenderer({
           </div>
 
           <nav className="hidden items-center gap-6 text-sm font-medium lg:flex" style={{ color: style.subtext }}>
-            {featuredVehicles.length > 0 ? <a href="#inventory">Inventory</a> : null}
+            {availableVehicles.length > 0 ? <a href="#inventory">Inventory</a> : null}
             <a href="#services">Services</a>
             <a href="#about">About</a>
             <a href="#team">Team</a>
@@ -360,75 +361,7 @@ export function WebsiteTemplateRenderer({
           </div>
         </section>
 
-        {featuredVehicles.length > 0 && (
-          <SectionBlock id="inventory" bg={style.cardBg}>
-            <SectionTitle
-              eyebrow="Inventory"
-              title="Featured vehicles"
-              description="A snapshot of what's on the lot right now. Reach out to schedule a test drive or check current availability."
-            />
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {featuredVehicles.map((vehicle) => {
-                const photo = vehicle.photoUrls[0] ?? null
-                const price =
-                  vehicle.salePrice != null
-                    ? `$${vehicle.salePrice.toLocaleString()}`
-                    : vehicle.rentalDailyRate != null
-                    ? `$${vehicle.rentalDailyRate.toLocaleString()}/day`
-                    : 'Contact for price'
-                return (
-                  <SurfaceCard key={vehicle.id} className="overflow-hidden p-0" style={{ backgroundColor: style.cardBg, borderColor: style.border }}>
-                    <div className="flex h-44 items-center justify-center border-b" style={{ borderColor: style.border, backgroundColor: style.bg }}>
-                      {photo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={photo} alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} className="h-full w-full object-cover" />
-                      ) : (
-                        <CarFront className="h-10 w-10 opacity-30" />
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-lg font-bold tracking-[-0.02em]">
-                            {vehicle.year} {vehicle.make} {vehicle.model}
-                          </h3>
-                          {vehicle.trim ? (
-                            <p className="text-xs uppercase tracking-[0.18em]" style={{ color: style.subtext }}>
-                              {vehicle.trim}
-                            </p>
-                          ) : null}
-                        </div>
-                        <span
-                          className="shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]"
-                          style={{ borderColor: style.border, color: website.primaryColor }}
-                        >
-                          {vehicle.condition === 'new' ? 'New' : vehicle.condition === 'certified_pre_owned' ? 'Certified' : 'Used'}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex items-center gap-2 text-sm" style={{ color: style.subtext }}>
-                        <Gauge className="h-4 w-4" />
-                        {vehicle.mileage != null ? `${vehicle.mileage.toLocaleString()} mi` : 'Mileage on request'}
-                      </div>
-                      <div className="mt-5 flex items-center justify-between">
-                        <span className="text-lg font-black" style={{ color: website.primaryColor }}>
-                          {price}
-                        </span>
-                        <a
-                          href="#contact"
-                          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold text-white"
-                          style={{ background: `linear-gradient(135deg, ${website.primaryColor}, ${website.secondaryColor})` }}
-                        >
-                          {website.ctaPrimaryText}
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </a>
-                      </div>
-                    </div>
-                  </SurfaceCard>
-                )
-              })}
-            </div>
-          </SectionBlock>
-        )}
+        <VehicleFinder vehicles={availableVehicles} highlightedVehicles={featuredVehicles} website={website} style={style} />
 
         {services.length > 0 && (
           <SectionBlock id="services">

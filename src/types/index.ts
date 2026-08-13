@@ -448,6 +448,7 @@ export interface WebsiteContent {
   highlights: WebsiteHighlight[]
   faqs: WebsiteFaq[]
   vehicleHighlights: WebsiteVehicleHighlight[]
+  availableVehicles: Vehicle[]
 }
 
 export interface WebsiteSubscriber {

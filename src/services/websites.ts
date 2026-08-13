@@ -12,6 +12,7 @@ import type {
 import { slugify } from '@/lib/utils'
 import type { DbClient } from './_shared'
 import type { SaveWebsiteContentInput, WebsiteInput } from '@/validations'
+import { listAvailableVehicles } from './vehicles'
 
 function toWebsite(row: any): Website {
   return {
@@ -510,7 +511,7 @@ export async function getWebsiteContentForBusiness(supabase: DbClient, businessI
     throw new Error('Website not found')
   }
 
-  const [{ data: services }, { data: teamMembers }, { data: testimonials }, { data: highlights }, { data: faqs }, { data: vehicleHighlights }] =
+  const [{ data: services }, { data: teamMembers }, { data: testimonials }, { data: highlights }, { data: faqs }, { data: vehicleHighlights }, availableVehicles] =
     await Promise.all([
       supabase.from('website_services').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
       supabase.from('website_team_members').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
@@ -518,6 +519,7 @@ export async function getWebsiteContentForBusiness(supabase: DbClient, businessI
       supabase.from('website_highlights').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
       supabase.from('website_faqs').select('*').eq('business_id', businessId).order('sort_order', { ascending: true }),
       supabase.from('website_vehicle_highlights').select('*, vehicles(*)').eq('business_id', businessId).order('sort_order', { ascending: true }),
+      listAvailableVehicles(supabase, businessId),
     ])
 
   return {
@@ -528,6 +530,7 @@ export async function getWebsiteContentForBusiness(supabase: DbClient, businessI
     highlights: (highlights ?? []).map(toHighlight),
     faqs: (faqs ?? []).map(toFaq),
     vehicleHighlights: (vehicleHighlights ?? []).map(toVehicleHighlight),
+    availableVehicles,
   }
 }
 

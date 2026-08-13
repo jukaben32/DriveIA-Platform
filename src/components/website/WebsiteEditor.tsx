@@ -303,6 +303,7 @@ export function WebsiteEditor({
           createdAt: vehicle.createdAt,
           vehicle,
         })),
+      availableVehicles: vehicles,
     }),
     [website, services, teamMembers, testimonials, highlights, faqs, featuredVehicleIds, vehicles]
   )
