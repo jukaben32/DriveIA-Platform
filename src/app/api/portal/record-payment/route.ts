@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       })
     : await recordBillingTransaction(admin, business.id, {
         appointmentId: null,
-        patientId: parsed.data.patientId ?? null,
+        customerId: parsed.data.customerId ?? null,
         amount: parsed.data.amount,
         currency: parsed.data.currency,
         chainId: parsed.data.chainId,
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     message: `Payment recorded for ${parsed.data.appointmentId ? `appointment ${parsed.data.appointmentId}` : 'portal account'}.`,
     data: {
       appointmentId: parsed.data.appointmentId ?? null,
-      patientId: parsed.data.patientId ?? null,
+      customerId: parsed.data.customerId ?? null,
       txHash: parsed.data.txHash,
       amount: parsed.data.amount,
       currency: parsed.data.currency,

@@ -9,7 +9,7 @@ function toBusiness(row: any): Business {
     ownerId: row.owner_id,
     name: row.name,
     slug: row.slug,
-    specialty: row.specialty ?? null,
+    businessType: row.business_type ?? null,
     description: row.description ?? null,
     logoUrl: row.logo_url ?? null,
     phone: row.phone ?? null,
@@ -76,7 +76,7 @@ function toPublicProfile(row: any): PublicBusinessProfile {
     id: row.id,
     name: row.name,
     slug: row.slug,
-    specialty: row.specialty ?? null,
+    businessType: row.business_type ?? null,
     description: row.description ?? null,
     logoUrl: row.logo_url ?? null,
     phone: row.phone ?? null,
@@ -159,7 +159,7 @@ export async function getBusinessById(supabase: DbClient, businessId: string) {
 export async function getPublicBusinessProfile(supabase: DbClient, slug: string) {
   const { data, error } = await supabase
     .from('businesses')
-    .select('id, name, slug, specialty, description, logo_url, phone, booking_email, timezone, address, website, city, state, zip_code, payment_wallet_address, payment_chain_id, payment_currency')
+    .select('id, name, slug, business_type, description, logo_url, phone, booking_email, timezone, address, website, city, state, zip_code, payment_wallet_address, payment_chain_id, payment_currency')
     .eq('slug', slug)
     .maybeSingle()
   if (error) throw error
@@ -184,7 +184,7 @@ export async function createBusiness(
     ownerId: string
     name: string
     slug?: string
-    specialty?: string | null
+    businessType?: Business['businessType'] | null
     description?: string | null
     contactEmail?: string | null
     phone?: string | null
@@ -193,8 +193,8 @@ export async function createBusiness(
 ) {
   const baseSlug = slugify(input.slug || input.name)
   // businesses.slug is unique — a base slug alone collides whenever two
-  // signups produce the same name (the same clinic name tried more than
-  // once, two different clinics with a common name, etc.), and that
+  // signups produce the same name (the same dealership name tried more than
+  // once, two different dealers with a common name, etc.), and that
   // collision used to bubble up as an unhandled Postgres error that crashed
   // the whole dashboard layout on the very next login. Retry with a short
   // random suffix instead of failing outright.
@@ -208,7 +208,7 @@ export async function createBusiness(
         owner_id: input.ownerId,
         name: input.name,
         slug,
-        specialty: input.specialty ?? null,
+        business_type: input.businessType ?? null,
         description: input.description ?? null,
         contact_email: input.contactEmail ?? null,
         phone: input.phone ?? null,
@@ -255,7 +255,7 @@ export async function createBusiness(
         business_id: business.id,
         name: 'Atlas',
         title: defaultAgentName,
-        specialty: input.specialty ?? 'Dealership & Rentals',
+        specialty: 'Dealership & Rentals',
         voice: 'alloy',
         personality: 'friendly',
         sensitivity: 0.55,
@@ -341,7 +341,7 @@ export async function createBusiness(
   }))
 
   const seedOperations = [
-    supabase.from('clinic_services').insert(serviceRows),
+    supabase.from('services').insert(serviceRows),
     supabase.from('business_availability').insert(availabilityRows),
     supabase.from('widgets').insert({
       business_id: business.id,
@@ -372,8 +372,8 @@ export async function createBusiness(
       site_description: input.description || `Browse vehicles and reserve rentals with ${input.name}.`,
       hero_headline: 'Find your next ride, fast.',
       hero_subheadline: 'Explore inventory, book a test drive, reserve a rental, and let DriveIA handle the follow-up.',
-      cta_primary_text: 'Book Test Drive',
-      cta_secondary_text: 'Browse Inventory',
+      cta_primary_text: 'Schedule Test Drive',
+      cta_secondary_text: 'View Inventory',
       about_title: 'About the dealership',
       about_story:
         input.description || 'Our team helps customers compare vehicles, reserve rentals, and move through the buying or booking process with confidence.',
@@ -384,10 +384,11 @@ export async function createBusiness(
       contact_address: null,
       contact_hours: 'Mon - Sat, 9:00 AM - 6:00 PM',
       years_experience: 18,
-      patients_served: 8400,
+      customers_served: 8400,
       satisfaction_pct: 97.8,
       trust_badges: ['Certified inventory', 'Flexible rentals', 'Fast approvals'],
       featured_service_ids: [],
+      featured_vehicle_ids: [],
     }),
   ]
 
@@ -408,7 +409,7 @@ export async function updateBusiness(
     .update({
       name: patch.name,
       slug: patch.slug,
-      specialty: patch.specialty,
+      business_type: patch.businessType,
       description: patch.description,
       logo_url: patch.logoUrl,
       phone: patch.phone,
@@ -513,30 +514,46 @@ export async function getDashboardAnalytics(supabase: DbClient, businessId: stri
   const now = new Date()
   const startOfDay = new Date(now)
   startOfDay.setHours(0, 0, 0, 0)
-  const startOfWeek = new Date(now)
-  startOfWeek.setDate(now.getDate() - now.getDay())
-  startOfWeek.setHours(0, 0, 0, 0)
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [appointmentsToday, upcomingAppointments, totalPatients, cancelledAppointments, completedAppointments, noShowAppointments, unreadNotifications, activeAgents, activeServices, totalConversations, bookedConversations, callbacksRequested] = await Promise.all([
+  const [
+    appointmentsToday,
+    upcomingAppointments,
+    totalCustomers,
+    cancelledAppointments,
+    completedAppointments,
+    noShowAppointments,
+    unreadNotifications,
+    activeAgents,
+    activeServices,
+    totalConversations,
+    bookedConversations,
+    callbacksRequested,
+    vehiclesInStock,
+    vehiclesReserved,
+    dealsWonThisMonth,
+  ] = await Promise.all([
     supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('business_id', businessId).gte('scheduled_at', startOfDay.toISOString()).lt('scheduled_at', new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000).toISOString()),
     supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('business_id', businessId).gte('scheduled_at', now.toISOString()).neq('status', 'cancelled'),
-    supabase.from('patients').select('id', { count: 'exact', head: true }).eq('business_id', businessId),
+    supabase.from('customers').select('id', { count: 'exact', head: true }).eq('business_id', businessId),
     supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'cancelled').gte('created_at', startOfMonth.toISOString()),
     supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'completed').gte('created_at', startOfMonth.toISOString()),
     supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'no_show').gte('created_at', startOfMonth.toISOString()),
     supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('business_id', businessId).is('read_at', null),
     supabase.from('ai_agents').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'live'),
-    supabase.from('clinic_services').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('active', true),
+    supabase.from('services').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('active', true),
     supabase.from('conversations').select('id', { count: 'exact', head: true }).eq('business_id', businessId),
     supabase.from('conversations').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('outcome', 'booked_appointment'),
     supabase.from('conversations').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('outcome', 'escalated'),
+    supabase.from('vehicles').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'available'),
+    supabase.from('vehicles').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'reserved'),
+    supabase.from('deals').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'won').gte('closed_at', startOfMonth.toISOString()),
   ])
 
   return {
     appointmentsToday: appointmentsToday.count ?? 0,
     upcomingAppointments: upcomingAppointments.count ?? 0,
-    totalPatients: totalPatients.count ?? 0,
+    totalCustomers: totalCustomers.count ?? 0,
     cancelledAppointments: cancelledAppointments.count ?? 0,
     completedAppointments: completedAppointments.count ?? 0,
     noShowAppointments: noShowAppointments.count ?? 0,
@@ -546,6 +563,9 @@ export async function getDashboardAnalytics(supabase: DbClient, businessId: stri
     totalConversations: totalConversations.count ?? 0,
     bookedConversations: bookedConversations.count ?? 0,
     callbacksRequested: callbacksRequested.count ?? 0,
+    vehiclesInStock: vehiclesInStock.count ?? 0,
+    vehiclesReserved: vehiclesReserved.count ?? 0,
+    dealsWonThisMonth: dealsWonThisMonth.count ?? 0,
   }
 }
 

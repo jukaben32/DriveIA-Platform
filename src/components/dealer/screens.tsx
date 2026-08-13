@@ -7,7 +7,6 @@ import {
   ClipboardList,
   CreditCard,
   Database,
-  HeartPulse,
   LayoutDashboard,
   LifeBuoy,
   LineChart,
@@ -17,7 +16,6 @@ import {
   NotebookText,
   ShieldCheck,
   Sparkles,
-  Stethoscope,
   Users,
   Wallet,
   Wrench,
@@ -38,7 +36,7 @@ import {
   Pencil,
   Eye,
   MapPinned,
-  Hospital,
+  Store,
   MonitorSmartphone,
   X,
 } from 'lucide-react'
@@ -65,7 +63,7 @@ import {
   ValueCard,
 } from './shared'
 
-type ClinicTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
+type DealerTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
 
 const upcomingAppointments = [
   { name: 'Jordan Reyes', note: 'Vehicle reservation', tone: 'teal' as const },
@@ -119,7 +117,7 @@ const workflow = [
     step: '01',
     title: 'Set up the business',
     body: 'Create the business profile, define vehicles, staff, and availability in a few minutes.',
-    icon: Hospital,
+    icon: Store,
   },
   {
     step: '02',
@@ -180,9 +178,9 @@ const widgetSteps = [
 ]
 
 const portalTimeline = [
-  { time: 'Today', title: 'General Consultation', description: '4:30 PM with Dr. Harrington', tone: 'teal' as const },
-  { time: 'Tomorrow', title: 'Follow Up Visit', description: 'Payment already processed', tone: 'blue' as const },
-  { time: 'Wed', title: 'Lab Results Review', description: 'Portal message ready', tone: 'emerald' as const },
+  { time: 'Today', title: 'Test Drive', description: '4:30 PM with a sales advisor', tone: 'teal' as const },
+  { time: 'Tomorrow', title: 'Rental Pickup', description: 'Payment already processed', tone: 'blue' as const },
+  { time: 'Wed', title: 'Service Reminder', description: 'Portal message ready', tone: 'emerald' as const },
 ]
 
 const marketingFaqs = [
@@ -204,7 +202,7 @@ const marketingFaqs = [
   },
   {
     q: 'Do I need to install anything?',
-    a: 'No — Clara AI runs entirely in the browser and embeds into your site with a single script tag.',
+    a: 'No — DriveIA runs entirely in the browser and embeds into your site with a single script tag.',
   },
 ]
 
@@ -286,17 +284,17 @@ export function MarketingHomeScreen() {
         <section id="producto" className="relative mx-auto mt-6 grid w-full max-w-7xl items-center gap-14 overflow-hidden rounded-[36px] border border-[var(--border-soft)] bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(247,240,231,0.92))] px-6 py-16 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:py-20">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(19,122,114,0.11),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(236,170,93,0.12),transparent_26%)]" />
           <div className="relative max-w-xl">
-            <SectionEyebrow>AI medical receptionist</SectionEyebrow>
+            <SectionEyebrow>AI mobility concierge</SectionEyebrow>
             <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-soft)] bg-white/72 px-3.5 py-1.5 text-[11px] font-semibold text-[var(--text-strong)] backdrop-blur-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand)]" />
               Voice, calendar, portal, and billing in one flow
             </div>
             <h1 className="mt-6 max-w-[12ch] font-display text-5xl font-semibold leading-[0.98] tracking-[-0.06em] text-[var(--text-strong)] sm:text-6xl">
-              Every clinic gets an AI front desk that never misses the call.
+              Every dealership gets an AI front desk that never misses the call.
             </h1>
             <p className="mt-6 max-w-lg text-lg leading-8 text-[var(--text-muted)]">
-              Clara AI centralizes appointments, patients, billing, and a voice agent in one dashboard —
-              so your front desk does less and your patients wait less.
+              Clara AI centralizes appointments, customers, billing, and a voice agent in one dashboard —
+              so your front desk does less and your customers wait less.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <ButtonLink href="/signup" icon="calendar">
@@ -310,7 +308,7 @@ export function MarketingHomeScreen() {
             <div className="mt-10 flex flex-wrap items-center gap-6 border-t border-[var(--border-soft)] pt-7">
               <div>
                 <div className="font-display text-2xl font-bold text-[var(--text-strong)]">120+</div>
-                <div className="text-xs text-[var(--text-muted)]">active clinics</div>
+                <div className="text-xs text-[var(--text-muted)]">active dealerships</div>
               </div>
               <div className="h-8 w-px bg-[var(--border-soft)]" />
               <div>
@@ -333,8 +331,8 @@ export function MarketingHomeScreen() {
             {[
               { value: '67%', label: 'appointment completion rate', detail: 'The booking flow is guided end to end.' },
               { value: '-33%', label: 'no-shows after AI reminders', detail: 'Follow-ups happen before the visit slips.' },
-              { value: '13', label: 'average active patients per clinic', detail: 'Enough volume to feel the impact quickly.' },
-              { value: '6 min', label: 'average time to activate a service', detail: 'Fast setup for new clinics and service lines.' },
+              { value: '13', label: 'average active customers per dealership', detail: 'Enough volume to feel the impact quickly.' },
+              { value: '6 min', label: 'average time to activate a service', detail: 'Fast setup for new dealerships and service lines.' },
             ].map((stat) => (
               <SurfaceCard key={stat.label} className="p-5">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">{stat.label}</div>
@@ -349,10 +347,10 @@ export function MarketingHomeScreen() {
           <div className="max-w-xl">
             <SectionEyebrow>Platform</SectionEyebrow>
             <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-[var(--text-strong)]">
-              Everything a modern clinic needs, on one dashboard
+              Everything a modern dealership needs, on one dashboard
             </h2>
             <p className="mt-3 text-[var(--text-muted)]">
-              Six connected modules: what the voice agent books shows up instantly in the calendar, patient records, and billing.
+              Six connected modules: what the voice agent books shows up instantly in the calendar, customer records, and billing.
             </p>
           </div>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -377,7 +375,7 @@ export function MarketingHomeScreen() {
                     </div>
                     <StatusBadge tone="teal">24/7</StatusBadge>
                   </div>
-                  <PhoneFrame title="Clara AI" subtitle="Patient intake live">
+                  <PhoneFrame title="Clara AI" subtitle="Customer intake live">
                     <div className="space-y-3">
                       <div className="rounded-[20px] bg-[var(--brand-soft)] px-4 py-3 text-sm leading-6 text-[var(--brand-strong)]">
                         Hello, I can help you schedule a visit, check availability, or route you to the right person.
@@ -414,7 +412,7 @@ export function MarketingHomeScreen() {
             <div>
               <SectionEyebrow>Why Clara AI</SectionEyebrow>
               <h2 className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--text-strong)] sm:text-4xl">
-                Built for clinics that cannot afford to miss a call
+                Built for dealerships that cannot afford to miss a call
               </h2>
               <div className="mt-7 flex flex-col gap-4">
                 {workflow.map((item) => (
@@ -433,7 +431,7 @@ export function MarketingHomeScreen() {
                 ))}
               </div>
               <div className="mt-8 flex flex-wrap gap-2">
-                <Pill tone="teal">HIPAA-ready encryption</Pill>
+                <Pill tone="teal">Bank-grade encryption</Pill>
                 <Pill tone="slate">99.9% uptime</Pill>
                 <Pill tone="slate">Dedicated support</Pill>
               </div>
@@ -444,14 +442,14 @@ export function MarketingHomeScreen() {
         <section id="portal" className="border-y border-[var(--border-soft)]" style={{ background: 'var(--panel-soft)' }}>
           <div className="mx-auto w-full max-w-7xl px-6 py-24 lg:px-8">
             <div className="max-w-xl">
-              <SectionEyebrow>Patient portal &amp; widget</SectionEyebrow>
+              <SectionEyebrow>Customer portal &amp; widget</SectionEyebrow>
               <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-[var(--text-strong)]">
                 Self-service booking, payments, and support
               </h2>
             </div>
             <div className="mt-10 grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
               <SurfaceCard className="p-6">
-                <SectionEyebrow>Patient portal</SectionEyebrow>
+                <SectionEyebrow>Customer portal</SectionEyebrow>
                 <h3 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--text-strong)]">
                   Reschedule, cancel, and pay without calling the front desk
                 </h3>
@@ -465,7 +463,7 @@ export function MarketingHomeScreen() {
                   <div>
                     <SectionEyebrow>Widget preview</SectionEyebrow>
                     <h3 className="mt-3 font-display text-2xl font-bold tracking-tight text-[var(--text-strong)]">
-                      A booking experience patients will actually use
+                      A booking experience customers will actually use
                     </h3>
                   </div>
                   <StatusBadge tone="teal">Live</StatusBadge>
@@ -501,7 +499,7 @@ export function MarketingHomeScreen() {
         <section className="mx-auto w-full max-w-7xl px-6 py-24 lg:px-8">
           <SectionHeading
             eyebrow={<SectionEyebrow>Clients</SectionEyebrow>}
-            title="What clinics already using it say"
+            title="What dealerships already using it say"
             align="center"
           />
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -515,16 +513,16 @@ export function MarketingHomeScreen() {
           <div className="mx-auto w-full max-w-7xl px-6 py-24 lg:px-8">
             <SectionHeading
               eyebrow={<SectionEyebrow>Pricing</SectionEyebrow>}
-              title="Clear plans for clinics at every stage"
-              description="The first phase focuses on the widget, clinic dashboard, patient portal, and USDC billing. Stripe can be added later if you want it."
+              title="Clear plans for dealerships at every stage"
+              description="The first phase focuses on the widget, dealership dashboard, customer portal, and USDC billing. Stripe can be added later if you want it."
               align="center"
             />
             <div className="mt-10 grid gap-px border border-[var(--border-soft)] bg-[var(--border-soft)] lg:grid-cols-4">
               {[
                 { name: 'Free', price: '$0', body: 'Sandbox, demo data, and widget preview.' },
-                { name: 'Starter', price: '$49', body: 'Single clinic with calendar, widget, and portal.' },
+                { name: 'Starter', price: '$49', body: 'Single dealership with calendar, widget, and portal.' },
                 { name: 'Professional', price: '$99', body: 'Automation, analytics, billing, and AI tools.', featured: true },
-                { name: 'Enterprise', price: '$299', body: 'Multi-clinic, custom integrations, and dedicated support.' },
+                { name: 'Enterprise', price: '$299', body: 'Multi-location, custom integrations, and dedicated support.' },
               ].map((plan) => (
                 <div key={plan.name} className="relative bg-[var(--page-bg)] p-6" style={plan.featured ? { boxShadow: 'inset 0 0 0 1px var(--brand)' } : undefined}>
                   {plan.featured ? <Pill tone="teal" className="mb-3">Most popular</Pill> : null}
@@ -578,7 +576,7 @@ export function MarketingHomeScreen() {
                   <SurfaceCard className="p-5">
                     <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Deployment</div>
                     <div className="mt-3 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--text-strong)]">14 days</div>
-                    <div className="mt-1.5 text-sm leading-6 text-[var(--text-muted)]">Typical rollout for a new clinic.</div>
+                    <div className="mt-1.5 text-sm leading-6 text-[var(--text-muted)]">Typical rollout for a new dealership.</div>
                   </SurfaceCard>
                   <SurfaceCard className="p-5">
                     <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Support</div>
@@ -605,7 +603,7 @@ export function MarketingHomeScreen() {
           <div>
             <BrandMark compact />
             <p className="mt-3.5 max-w-[240px] text-[13px] leading-6 text-[var(--text-muted)]">
-              Calendar, patients, billing, and an AI voice agent — one dashboard for your clinic network.
+              Calendar, customers, billing, and an AI voice agent — one dashboard for your dealership network.
             </p>
           </div>
           <div>
@@ -619,7 +617,7 @@ export function MarketingHomeScreen() {
           <div>
             <div className="font-display text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">Company</div>
             <div className="mt-3.5 flex flex-col gap-2.5 text-sm">
-              <a href="#portal" className="hover:text-[var(--brand-strong)]">Patient portal</a>
+              <a href="#portal" className="hover:text-[var(--brand-strong)]">Customer portal</a>
               <a href="#faq" className="hover:text-[var(--brand-strong)]">FAQ</a>
               <a href="/login" className="hover:text-[var(--brand-strong)]">Sign in</a>
             </div>
@@ -633,7 +631,7 @@ export function MarketingHomeScreen() {
           </div>
         </div>
         <div className="border-t border-[var(--border-soft)] px-6 py-5 text-xs text-[var(--text-muted)] lg:px-8">
-          <div className="mx-auto w-full max-w-7xl">© {new Date().getFullYear()} Clara AI. All rights reserved.</div>
+          <div className="mx-auto w-full max-w-7xl">© {new Date().getFullYear()} DriveIA. All rights reserved.</div>
         </div>
       </footer>
     </div>
@@ -642,10 +640,10 @@ export function MarketingHomeScreen() {
 
 // DashboardOverviewScreen was removed from here — this was the single
 // biggest source of confusion in the whole app: "Dr. Harrington", "Sunday,
-// April 26, 2026", and the patient names in dashboardStats/dashboardSchedule
+// April 26, 2026", and the customer names in dashboardStats/dashboardSchedule
 // (Dault Hussain, Md Shair...) looked convincing enough that they were
 // mistaken for real data during testing (Juan/Hermes both flagged this). A
-// real version now lives in src/components/clinic/DashboardOverviewManager.tsx:
+// real version now lives in src/components/dealer/DashboardOverviewManager.tsx:
 // real greeting/date, real today's schedule and upcoming list
 // (listAppointmentsForBusiness), real stats (getDashboardAnalytics), real
 // live agent + knowledge doc counts, and real revenue (getBillingSummary).
@@ -653,23 +651,23 @@ export function MarketingHomeScreen() {
 // DashboardAppointmentsScreen was removed from here — same story: hardcoded
 // rows (Md Tajuddin, Shakib, Amit, Dault Hussain), status filter pills with
 // no onClick, action buttons that were links back to this same page. A real
-// version now lives in src/components/clinic/AppointmentsManager.tsx, wired
+// version now lives in src/components/dealer/AppointmentsManager.tsx, wired
 // to services/appointments.ts (listAppointmentsForBusiness) and the already-
-// working POST /api/appointments/status route (which also sends the patient
+// working POST /api/appointments/status route (which also sends the customer
 // email + creates the in-app notification — reusing it instead of calling
 // updateAppointmentStatus directly keeps that behavior).
 
 // DashboardWidgetScreen was removed from here — colors/tone/slot duration
 // were plain display values (not inputs) and the embed snippet pointed at
 // a hardcoded iframe src. A real version now lives in
-// src/components/clinic/WidgetManager.tsx, wired to services/widgets.ts
+// src/components/dealer/WidgetManager.tsx, wired to services/widgets.ts
 // (getWidgetForBusiness/updateWidget) and the real /api/widget-script
 // embed route.
 
 // DashboardWebsiteScreen was removed from here — it was a static preview
 // mockup with fake copy ("Heart Care You Can Trust") and no connection to
 // the real websites table. A real, functional editor now lives in
-// src/components/clinic/WebsiteEditor.tsx, wired to the already-working
+// src/components/website/WebsiteEditor.tsx, wired to the already-working
 // /api/website/save, /publish, and /upload-image routes.
 
 // DashboardServicesScreen was removed from here — same story as the other
@@ -677,23 +675,23 @@ export function MarketingHomeScreen() {
 // `const services = [...]` above), the "Quick create panel" fields were
 // plain <div>s (not <input>s), and "Create service" was a link to this same
 // page, not a submit handler. A real version now lives in
-// src/components/clinic/ServicesManager.tsx, wired directly to
-// services/services.ts's createClinicService/deleteClinicService/
-// setClinicServiceActive via the browser Supabase client (RLS-protected,
+// src/components/dealer/ServicesManager.tsx, wired directly to
+// services/services.ts's createService/deleteService/
+// setServiceActive via the browser Supabase client (RLS-protected,
 // no dedicated API route needed for this one).
 
-// DashboardPatientsScreen was removed from here — same story: hardcoded
-// visitor list (Md Tajuddin, Shakib, Amit, "Just Funny"), "Add patient"
-// linked back to this same page, patient profile stats (13 appointments,
+// DashboardCustomersScreen was removed from here — same story: hardcoded
+// visitor list (Md Tajuddin, Shakib, Amit, "Just Funny"), "Add customer"
+// linked back to this same page, customer profile stats (13 appointments,
 // "Dault Hussain") baked in as literal strings. A real version now lives in
-// src/components/clinic/PatientsManager.tsx, backed by services/patients.ts
-// (listPatientsForBusiness/createPatient) and the appointments already
-// loaded for this business to compute each patient's real visit stats.
+// src/components/dealer/CustomersManager.tsx, backed by services/customers.ts
+// (listCustomersForBusiness/createCustomer) and the appointments already
+// loaded for this business to compute each customer's real visit stats.
 
 // DashboardSettingsScreen was removed from here — hours/breaks were plain
 // text (not inputs), "Save" and "Block date" were links back to this same
 // page, and "0 blocked" was a fixed literal. A real version now lives in
-// src/components/clinic/SettingsManager.tsx, wired to services/business.ts
+// src/components/dealer/SettingsManager.tsx, wired to services/business.ts
 // (updateBusiness, getBusinessAvailability/upsertBusinessAvailability,
 // getClosedDates/addClosedDate/removeClosedDate — all already existed).
 // Fixed a real bug along the way: upsertBusinessAvailability/addClosedDate
@@ -702,7 +700,7 @@ export function MarketingHomeScreen() {
 
 // DashboardSupportScreen was removed from here — 3 hardcoded tickets and a
 // static "reschedule" thread with a composer that didn't submit anywhere.
-// A real version now lives in src/components/clinic/SupportManager.tsx,
+// A real version now lives in src/components/dealer/SupportManager.tsx,
 // wired to services/support.ts (already existed: tickets + messages +
 // status) — replies actually post to support_messages and status buttons
 // call updateSupportTicketStatus.
@@ -711,14 +709,14 @@ export function MarketingHomeScreen() {
 // notifications plus a "Read and action statuses" panel with invented
 // delivery percentages (86% email delivery, 72% widget pings, none of it
 // backed by real data). A real version now lives in
-// src/components/clinic/NotificationsManager.tsx, wired to
+// src/components/dealer/NotificationsManager.tsx, wired to
 // services/notifications.ts (already existed): a real activity feed with
 // mark-as-read / mark-all-read against the notifications table.
 
 // DashboardAnalyticsScreen was removed from here — every metric (67%
 // conversion, 33% no-show, the 7-day bar chart values, "$8.2k" revenue)
 // was a fixed literal. A real version now lives in
-// src/components/clinic/AnalyticsManager.tsx: conversion/no-show/
+// src/components/dealer/AnalyticsManager.tsx: conversion/no-show/
 // completion computed from real appointments and conversations
 // (getDashboardAnalytics, listConversationsForBusiness — already
 // existed), revenue from getBillingSummary, and the weekly bar chart from
@@ -727,7 +725,7 @@ export function MarketingHomeScreen() {
 // DashboardBillingScreen was removed from here — plan cards and the
 // transaction list were both hardcoded literals (no plan was ever really
 // "Active", the tx hashes were fake). A real version now lives in
-// src/components/clinic/BillingManager.tsx, reading the real subscription
+// src/components/dealer/BillingManager.tsx, reading the real subscription
 // (services/business.ts getSubscription), payment wallet config, and
 // billing_transactions history (services/billing.ts, already existed).
 
@@ -737,7 +735,7 @@ export function PortalHomeScreen() {
       <div className="rounded-[32px] border border-white/70 bg-white/90 p-6 shadow-[0_18px_55px_rgba(15,23,42,0.06)]">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <SectionEyebrow>Patient portal</SectionEyebrow>
+            <SectionEyebrow>Customer portal</SectionEyebrow>
             <h1 className="mt-4 text-3xl font-black tracking-tight text-[var(--text-strong)]">Welcome back, Dault Hussain</h1>
             <p className="mt-2 text-sm text-[var(--text-muted)]">Manage appointments, receipts, support tickets, and reminders.</p>
           </div>
@@ -764,7 +762,7 @@ export function PortalHomeScreen() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Upcoming appointment</div>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-[var(--text-strong)]">General Consultation</h2>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-[var(--text-strong)]">Test Drive</h2>
             </div>
             <StatusBadge tone="blue">Booked</StatusBadge>
           </div>
@@ -778,8 +776,8 @@ export function PortalHomeScreen() {
               <strong className="text-sm text-[var(--text-strong)]">9:00 AM - 9:30 AM</strong>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <span className="text-sm text-[var(--text-muted)]">Clinic</span>
-              <strong className="text-sm text-[var(--text-strong)]">Dr. Jonathan M. Harrington</strong>
+              <span className="text-sm text-[var(--text-muted)]">Dealership</span>
+              <strong className="text-sm text-[var(--text-strong)]">DriveIA Motors</strong>
             </div>
           </div>
         </SurfaceCard>
@@ -807,7 +805,7 @@ export function PortalLoginScreen() {
         <div className="relative">
           <BrandMark />
           <h1 className="mt-10 max-w-xl text-5xl font-black tracking-tight sm:text-6xl">
-            The patient portal that feels like concierge care
+            The customer portal that feels like concierge care
           </h1>
           <p className="mt-5 max-w-lg text-base leading-8 text-white/76">
             Access appointments, book a visit, and manage support requests with a secure magic-link or OTP flow.
@@ -815,7 +813,7 @@ export function PortalLoginScreen() {
           <div className="mt-8 space-y-3">
             <div className="rounded-[24px] border border-white/10 bg-white/6 px-5 py-4">
               <div className="text-sm font-bold">Magic link login</div>
-              <div className="text-xs text-white/70">Send a one-time login link to the patient email.</div>
+              <div className="text-xs text-white/70">Send a one-time login link to the customer email.</div>
             </div>
             <div className="rounded-[24px] border border-white/10 bg-white/6 px-5 py-4">
               <div className="text-sm font-bold">OTP fallback</div>
@@ -845,7 +843,7 @@ export function PortalRegisterScreen() {
   return (
     <div className="grid min-h-[calc(100vh-0px)] gap-8 px-4 py-6 lg:grid-cols-[1fr_0.94fr] lg:px-8">
       <SurfaceCard className="p-8">
-        <SectionEyebrow>Patient onboarding</SectionEyebrow>
+        <SectionEyebrow>Customer onboarding</SectionEyebrow>
         <h2 className="mt-5 text-3xl font-black tracking-tight text-[var(--text-strong)]">Create your portal profile</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {[
@@ -875,7 +873,7 @@ export function PortalRegisterScreen() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.24),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.22),transparent_34%)]" />
         <div className="relative">
           <BrandMark />
-          <h1 className="mt-10 text-4xl font-black tracking-tight sm:text-5xl">Everything the clinic needs, from a patient account</h1>
+          <h1 className="mt-10 text-4xl font-black tracking-tight sm:text-5xl">Everything the dealership needs, from a customer account</h1>
           <p className="mt-4 max-w-lg text-sm leading-7 text-white/76">
             View your appointments, receive reminders, and open support tickets without calling the front desk.
           </p>
@@ -891,7 +889,7 @@ export function PortalAppointmentsScreen() {
       <SectionHeading
         eyebrow={<SectionEyebrow>Appointments</SectionEyebrow>}
         title="Reschedule, cancel, and review your upcoming visits"
-        description="Patients can self-serve within policy, while the clinic stays informed and in control."
+        description="Customers can self-serve within policy, while the dealership stays informed and in control."
       />
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <SurfaceCard className="p-6">
@@ -938,10 +936,10 @@ export function PortalSupportScreen() {
         <SectionHeading
           eyebrow={<SectionEyebrow>Support</SectionEyebrow>}
           title="Open a ticket in seconds"
-          description="Ask for a receipt, a schedule change, or help with the portal. The clinic gets the ticket right away."
+          description="Ask for a receipt, a schedule change, or help with the portal. The dealership gets the ticket right away."
         />
         <div className="mt-6 space-y-3">
-          {['Billing', 'Reschedule', 'Prescription question', 'Appointment note'].map((subject) => (
+          {['Billing', 'Reschedule', 'Trade-in question', 'Appointment note'].map((subject) => (
             <div key={subject} className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--panel-soft)] px-4 py-3 text-sm font-semibold text-[var(--text-strong)]">
               {subject}
             </div>
@@ -971,18 +969,18 @@ export function WidgetDemoScreen() {
       <SectionHeading
         eyebrow={<SectionEyebrow>Widget demo</SectionEyebrow>}
         title="A live booking assistant that can sit on any website"
-        description="The embed can be an iframe or a script snippet, and the widget keeps the clinic design language intact."
+        description="The embed can be an iframe or a script snippet, and the widget keeps the dealership design language intact."
       />
       <div className="grid gap-6 xl:grid-cols-[1fr_0.96fr]">
-        <BrowserFrame title="Public clinic website" subtitle="Widget anchored at the corner of the page" accent="rose">
+        <BrowserFrame title="Public dealership website" subtitle="Widget anchored at the corner of the page" accent="rose">
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
             <SurfaceCard className="bg-slate-950 p-7 text-white">
               <h2 className="text-5xl font-black tracking-tight sm:text-6xl">
-                Heart Care
-                <span className="block text-rose-300">You Can Trust</span>
+                Your Next Vehicle
+                <span className="block text-rose-300">Is One Chat Away</span>
               </h2>
               <p className="mt-4 max-w-lg text-sm leading-7 text-white/74">
-                Patients can book directly from the website while Clara captures the booking, reminders, and payment status.
+                Customers can book directly from the website while Clara captures the booking, reminders, and payment status.
               </p>
             </SurfaceCard>
             <PhoneFrame title="Clara AI" subtitle="AI Assistant Online" accent="rose">
@@ -1007,7 +1005,7 @@ export function WidgetDemoScreen() {
 {`<script src="http://localhost:3000/widget-script.js"></script>
 <script>
   window.ClaraWidget.init({
-    businessSlug: "clinic-demo",
+    businessSlug: "dealership-demo",
     color: "#dc2626",
     tone: "professional-and-friendly"
   });
@@ -1023,193 +1021,16 @@ export function WidgetDemoScreen() {
   )
 }
 
-export function SiteSlugScreen({ slug }: { slug: string }) {
-  return (
-    <div className="space-y-16 bg-[var(--page-bg)]">
-      <div className="rounded-b-[36px] bg-slate-950 text-white shadow-[0_24px_90px_rgba(15,23,42,0.14)]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 text-white">
-              <HeartPulse className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-sm font-black tracking-tight">Dr. Jonathan M. Harrington</div>
-              <div className="text-[11px] text-white/66">Interventional Cardiologist</div>
-            </div>
-          </div>
-          <nav className="hidden gap-8 text-sm font-semibold text-white/74 lg:flex">
-            {['Home', 'About', 'Services', 'Patient Info', 'Testimonials', 'Contact'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="transition hover:text-white">
-                {item}
-              </a>
-            ))}
-          </nav>
-          <ButtonLink href="/widget-demo" icon="calendar">
-            Book appointment
-          </ButtonLink>
-        </div>
-
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 pb-16 pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8">
-          <div className="max-w-2xl">
-            <Pill tone="rose">Board-certified interventional cardiologist</Pill>
-            <h1 className="mt-6 text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl">
-              Advanced
-              <span className="block text-rose-300">Heart Care</span>
-              You Can Trust
-            </h1>
-            <p className="mt-5 max-w-xl text-lg leading-8 text-white/74">
-              The {slug} clinic website blends premium branding, strong patient trust signals, and the Clara booking assistant.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/widget-demo" icon="calendar">
-                Schedule consultation
-              </ButtonLink>
-              <ButtonLink href="/portal" variant="secondary" icon="arrow">
-                Patient portal
-              </ButtonLink>
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            <SurfaceCard className="p-5">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Doctor profile</div>
-                  <div className="mt-2 text-2xl font-black tracking-tight text-[var(--text-strong)]">20+ years of cardiovascular excellence</div>
-                </div>
-                <StatusBadge tone="rose">Top Doctor 2022-2024</StatusBadge>
-              </div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <ValueCard label="Years" value="20+" icon={HeartPulse} tone="rose" />
-                <ValueCard label="Patients" value="12,000+" icon={Users} tone="blue" />
-                <ValueCard label="Success" value="98.6%" icon={CheckCircle2} tone="emerald" />
-              </div>
-            </SurfaceCard>
-            <SurfaceCard className="p-5">
-              <div className="grid gap-4 sm:grid-cols-3">
-                {['Board certified', '3x Castle Connolly', 'FACC & FSCAI'].map((item) => (
-                  <div key={item} className="rounded-2xl border border-[var(--border-soft)] bg-[var(--panel-soft)] px-4 py-3 text-sm font-semibold text-[var(--text-strong)]">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </SurfaceCard>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl space-y-12 px-6 lg:px-8">
-        <section id="about" className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              ['Board Certified', 'Dual certification in cardiovascular disease and interventional cardiology'],
-              ['3x Best Doctor', 'Castle Connolly best doctor distinction'],
-              ['40+ publications', 'Peer-reviewed work in cardiovascular journals'],
-              ['FACC & FSCAI', 'Leadership in interventional cardiology'],
-            ].map(([title, body], index) => (
-              <SurfaceCard key={title} className={cn('p-5', index === 1 ? 'bg-rose-50/70' : 'bg-white')}>
-                <div className="text-lg font-black tracking-tight text-[var(--text-strong)]">{title}</div>
-                <div className="mt-2 text-sm leading-7 text-[var(--text-muted)]">{body}</div>
-              </SurfaceCard>
-            ))}
-          </div>
-          <SurfaceCard className="p-6">
-            <SectionEyebrow>About the doctor</SectionEyebrow>
-            <h2 className="mt-4 text-4xl font-black tracking-tight text-[var(--text-strong)]">Two decades of cardiovascular excellence</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-8 text-[var(--text-muted)]">
-              The public site tells the clinical story, shows the specialties, and makes booking the obvious next step. It is intentionally calm, premium, and easy to scan.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <ButtonLink href="/widget-demo" icon="calendar">
-                Full biography
-              </ButtonLink>
-              <ButtonLink href="/portal" variant="secondary" icon="arrow">
-                Contact clinic
-              </ButtonLink>
-            </div>
-          </SurfaceCard>
-        </section>
-
-        <section id="services" className="space-y-6">
-          <SectionHeading
-            eyebrow={<SectionEyebrow>Cardiac services</SectionEyebrow>}
-            title="Comprehensive heart care expertise"
-            description="Services are presented as simple cards with enough detail to inspire confidence and enough brevity to convert."
-            align="center"
-          />
-          {(() => {
-            const services: Array<{
-              title: string
-              body: string
-              tone: ClinicTone
-            }> = [
-              {
-                title: 'Coronary Angiography',
-                body: 'Precise imaging of coronary arteries to detect blockages and guide treatment decisions.',
-                tone: 'teal',
-              },
-              {
-                title: 'Angioplasty & Stenting',
-                body: 'Minimally invasive procedure to open narrowed arteries and restore blood flow.',
-                tone: 'rose',
-              },
-              {
-                title: 'Echocardiography',
-                body: 'Advanced ultrasound imaging to evaluate heart structure, function, and valve performance.',
-                tone: 'blue',
-              },
-            ]
-
-            return (
-              <div className="grid gap-4 lg:grid-cols-3">
-                {services.map((item) => (
-                  <FeatureCard key={item.title} icon={HeartPulse} title={item.title} body={item.body} tone={item.tone} />
-                ))}
-              </div>
-            )
-          })()}
-        </section>
-
-        <section id="testimonials" className="space-y-6">
-          <SectionHeading
-            eyebrow={<SectionEyebrow>Testimonials</SectionEyebrow>}
-            title="Loved by healthcare providers"
-            align="center"
-          />
-          <div className="grid gap-4 lg:grid-cols-3">
-            {testimonials.map((item) => (
-              <QuoteCard key={item.author} quote={item.quote} author={item.author} role={item.role} />
-            ))}
-          </div>
-        </section>
-
-        <section id="contact" className="rounded-[34px] bg-gradient-to-r from-teal-600 to-cyan-500 px-6 py-12 text-white shadow-[0_20px_70px_rgba(13,148,136,0.18)] lg:px-10">
-          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <div className="inline-flex rounded-full bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em]">14-day free trial - no credit card</div>
-              <h2 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">Ready to transform your practice?</h2>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-white/80">
-                Embed the widget, launch the portal, and give patients a clean digital front door without rebuilding the whole site.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href="/signup" icon="calendar">
-                Start your free trial
-              </ButtonLink>
-              <ButtonLink href="/widget-demo" variant="secondary" icon="arrow">
-                See live demo
-              </ButtonLink>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  )
-}
-
 // AuthLoginScreen / AuthSignupScreen were removed from here — they were
 // static mockups (the "email"/"password" fields were plain <div>s, not
 // inputs; "Sign in" was a link to /dashboard with no auth check at all).
 // Real, functional versions now live directly in
 // src/app/(auth)/login/page.tsx and src/app/(auth)/signup/page.tsx, wired
 // to supabase.auth and services/business.ts's createBusiness().
+
+// SiteSlugScreen was removed from here too — it was a hardcoded cardiology
+// mockup (not fed by any real website content) left over from the
+// healthcare starter, and nothing in the app imported it. The real,
+// data-driven public site renderer lives in
+// src/components/website/WebsiteTemplateRenderer.tsx, wired to
+// services/websites.ts and rendered from src/app/sites/[slug]/page.tsx.

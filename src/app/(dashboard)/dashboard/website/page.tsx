@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getBusinessForUser } from '@/services/business'
 import { listAgentsForBusiness } from '@/services/agents'
 import { getOrCreateWebsiteForBusiness, getWebsiteContentForBusiness } from '@/services/websites'
+import { listVehiclesForBusiness } from '@/services/vehicles'
 import { WebsiteEditor } from '@/components/website/WebsiteEditor'
 
 export default async function WebsitePage() {
@@ -17,10 +18,11 @@ export default async function WebsitePage() {
 
   await getOrCreateWebsiteForBusiness(supabase, business)
 
-  const [content, agents] = await Promise.all([
+  const [content, agents, vehicles] = await Promise.all([
     getWebsiteContentForBusiness(supabase, business.id),
     listAgentsForBusiness(supabase, business.id),
+    listVehiclesForBusiness(supabase, business.id),
   ])
 
-  return <WebsiteEditor initialContent={content} agents={agents} businessName={business.name} />
+  return <WebsiteEditor initialContent={content} agents={agents} vehicles={vehicles} businessName={business.name} />
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { apiError, json, readJson } from '@/lib/api'
-import { resolveRealtimeClinicContext } from '@/lib/realtime'
+import { resolveRealtimeDealerContext } from '@/lib/realtime'
 import { executeRealtimeToolCall } from '@/ai/tools'
 import { realtimeToolRequestSchema } from '@/validations'
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   const admin = createAdminClient()
 
   try {
-    const context = await resolveRealtimeClinicContext(admin, {
+    const context = await resolveRealtimeDealerContext(admin, {
       businessSlug: parsed.data.businessSlug,
       widgetSlug: parsed.data.widgetSlug ?? null,
     })

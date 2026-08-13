@@ -10,7 +10,7 @@ export const slugSchema = z
 export const businessSchema = z.object({
   name: z.string().min(2).max(120),
   slug: slugSchema.optional(),
-  specialty: z.string().max(120).optional().nullable(),
+  businessType: z.enum(['new_car_dealer', 'used_car_dealer', 'rental_company', 'fleet_leasing', 'multi_brand']).optional().nullable(),
   description: z.string().max(5000).optional().nullable(),
   contactEmail: z.string().email().optional().nullable(),
   phone: z.string().max(40).optional().nullable(),
@@ -27,7 +27,7 @@ export const availabilitySchema = z.object({
   slotMinutes: z.number().int().min(5).max(240).optional(),
 })
 
-export const clinicServiceSchema = z.object({
+export const serviceSchema = z.object({
   name: z.string().min(2).max(120),
   description: z.string().max(4000).optional().nullable(),
   durationMinutes: z.number().int().min(5).max(480).optional(),
@@ -55,22 +55,76 @@ export const agentSchema = z.object({
   language: z.string().max(16).optional(),
 })
 
-export const patientSchema = z.object({
+export const customerSchema = z.object({
   name: z.string().min(2).max(120),
   email: z.string().email().optional().nullable(),
   phone: z.string().max(40).optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
+  driversLicenseNumber: z.string().max(60).optional().nullable(),
   notes: z.string().max(5000).optional().nullable(),
-  insuranceProvider: z.string().max(120).optional().nullable(),
+  interestType: z.enum(['purchase', 'rental', 'lease', 'trade_in', 'service', 'undecided']).optional(),
+  budgetMin: z.number().positive().optional().nullable(),
+  budgetMax: z.number().positive().optional().nullable(),
+  preferredVehicleType: z.string().max(80).optional().nullable(),
+  leadStatus: z.enum(['new', 'contacted', 'qualified', 'test_drive_scheduled', 'negotiating', 'won', 'lost']).optional(),
   source: z.enum(['ai_call', 'widget_chat', 'manual', 'portal', 'website_form', 'whatsapp']).optional(),
   authUserId: z.string().uuid().optional().nullable(),
 })
 
+export const vehicleSchema = z.object({
+  stockNumber: z.string().max(60).optional().nullable(),
+  vin: z.string().max(32).optional().nullable(),
+  make: z.string().min(1).max(60),
+  model: z.string().min(1).max(60),
+  trim: z.string().max(60).optional().nullable(),
+  year: z.number().int().min(1950).max(2100),
+  bodyType: z.enum(['sedan', 'suv', 'truck', 'van', 'coupe', 'convertible', 'hatchback', 'wagon', 'other']).optional().nullable(),
+  condition: z.enum(['new', 'used', 'certified_pre_owned']).optional(),
+  mileage: z.number().int().min(0).optional().nullable(),
+  exteriorColor: z.string().max(60).optional().nullable(),
+  interiorColor: z.string().max(60).optional().nullable(),
+  transmission: z.enum(['automatic', 'manual', 'cvt']).optional().nullable(),
+  fuelType: z.enum(['gasoline', 'diesel', 'hybrid', 'electric', 'plug_in_hybrid']).optional().nullable(),
+  listingType: z.enum(['sale', 'rental', 'both']).optional(),
+  salePrice: z.number().positive().optional().nullable(),
+  rentalDailyRate: z.number().positive().optional().nullable(),
+  rentalWeeklyRate: z.number().positive().optional().nullable(),
+  currency: z.string().min(3).max(10).optional(),
+  status: z.enum(['available', 'reserved', 'sold', 'rented', 'in_service', 'archived']).optional(),
+  description: z.string().max(4000).optional().nullable(),
+  features: z.array(z.string()).optional(),
+  photoUrls: z.array(z.string().url()).optional(),
+  location: z.string().max(120).optional().nullable(),
+  isFeatured: z.boolean().optional(),
+  sortOrder: z.number().int().min(0).optional(),
+})
+
+export const dealSchema = z.object({
+  customerId: z.string().uuid().optional().nullable(),
+  vehicleId: z.string().uuid().optional().nullable(),
+  agentId: z.string().uuid().optional().nullable(),
+  appointmentId: z.string().uuid().optional().nullable(),
+  dealType: z.enum(['sale', 'rental', 'lease']).optional(),
+  status: z.enum(['open', 'negotiating', 'won', 'lost', 'cancelled']).optional(),
+  agreedPrice: z.number().positive().optional().nullable(),
+  downPayment: z.number().positive().optional().nullable(),
+  financingNeeded: z.boolean().optional(),
+  tradeInDescription: z.string().max(2000).optional().nullable(),
+  tradeInValue: z.number().positive().optional().nullable(),
+  rentalStartDate: z.string().optional().nullable(),
+  rentalEndDate: z.string().optional().nullable(),
+  depositAmount: z.number().positive().optional().nullable(),
+  currency: z.string().min(3).max(10).optional(),
+  notes: z.string().max(5000).optional().nullable(),
+})
+
 export const appointmentCreateSchema = z.object({
-  patientId: z.string().uuid().optional().nullable(),
+  customerId: z.string().uuid().optional().nullable(),
   agentId: z.string().uuid().optional().nullable(),
   serviceId: z.string().uuid().optional().nullable(),
+  vehicleId: z.string().uuid().optional().nullable(),
   conversationId: z.string().uuid().optional().nullable(),
+  appointmentType: z.enum(['test_drive', 'sales_consultation', 'service', 'delivery', 'trade_in_appraisal', 'other']).optional(),
   scheduledAt: z.string().datetime(),
   source: z.enum(['widget', 'portal', 'manual', 'ai_call', 'phone', 'whatsapp']).optional(),
   status: z.enum(['scheduled', 'pending_confirmation', 'confirmed', 'completed', 'cancelled', 'no_show']).optional(),
@@ -83,7 +137,7 @@ export const appointmentStatusSchema = z.object({
   appointmentId: z.string().uuid(),
   status: z.enum(['scheduled', 'pending_confirmation', 'confirmed', 'completed', 'cancelled', 'no_show']),
   cancellationReason: z.string().max(2000).optional().nullable(),
-  cancelledBy: z.enum(['patient', 'business', 'system']).optional(),
+  cancelledBy: z.enum(['customer', 'business', 'system']).optional(),
 })
 
 export const appointmentRescheduleSchema = z.object({
@@ -98,7 +152,7 @@ export const appointmentPaymentSchema = z.object({
   chainId: z.number().int().positive().optional(),
   txHash: z.string().min(4).optional(),
   status: z.enum(['pending', 'confirmed', 'failed', 'refunded']).optional(),
-  paymentType: z.enum(['booking_deposit', 'full_payment', 'subscription', 'portal_topup']).optional(),
+  paymentType: z.enum(['booking_deposit', 'vehicle_deposit', 'rental_payment', 'full_payment', 'subscription', 'portal_topup']).optional(),
   appointmentPaymentStatus: z.enum(['not_required', 'pending', 'partial', 'paid', 'cash', 'refunded']).optional(),
   metadata: z.record(z.unknown()).optional().nullable(),
 })
@@ -111,13 +165,13 @@ export const portalCheckEmailSchema = z.object({
 
 export const portalRecordPaymentSchema = z.object({
   appointmentId: z.string().uuid().optional().nullable(),
-  patientId: z.string().uuid().optional().nullable(),
+  customerId: z.string().uuid().optional().nullable(),
   amount: z.number().positive(),
   currency: z.string().min(3).max(10),
   chainId: z.number().int().positive(),
   txHash: z.string().min(4),
   status: z.enum(['pending', 'confirmed', 'failed', 'refunded']).optional(),
-  paymentType: z.enum(['booking_deposit', 'full_payment', 'subscription', 'portal_topup']).optional(),
+  paymentType: z.enum(['booking_deposit', 'vehicle_deposit', 'rental_payment', 'full_payment', 'subscription', 'portal_topup']).optional(),
   metadata: z.record(z.unknown()).optional().nullable(),
 })
 
@@ -163,15 +217,16 @@ export const websiteSchema = z.object({
   contactHours: z.string().max(240).optional().nullable(),
   contactMapsUrl: z.string().url().optional().nullable(),
   yearsExperience: z.number().int().min(0).optional().nullable(),
-  patientsServed: z.number().int().min(0).optional().nullable(),
+  customersServed: z.number().int().min(0).optional().nullable(),
   satisfactionPct: z.number().min(0).max(100).optional().nullable(),
   trustBadges: z.array(z.string()).optional(),
   featuredServiceIds: z.array(z.string().uuid()).optional(),
+  featuredVehicleIds: z.array(z.string().uuid()).optional(),
 })
 
 export const websiteServiceSchema = z.object({
   id: z.string().uuid().optional(),
-  icon: z.string().default('home'),
+  icon: z.string().default('car'),
   name: z.string().default(''),
   description: z.string().optional().nullable(),
   duration: z.string().optional().nullable(),
@@ -197,7 +252,7 @@ export const websiteTestimonialSchema = z.object({
   sortOrder: z.coerce.number().int().default(0),
 })
 
-export const websiteSpecialtySchema = z.object({
+export const websiteHighlightSchema = z.object({
   id: z.string().uuid().optional(),
   label: z.string().default(''),
   sortOrder: z.coerce.number().int().default(0),
@@ -215,8 +270,9 @@ export const saveWebsiteContentSchema = z.object({
   services: z.array(websiteServiceSchema).default([]),
   teamMembers: z.array(websiteTeamMemberSchema).default([]),
   testimonials: z.array(websiteTestimonialSchema).default([]),
-  specialties: z.array(websiteSpecialtySchema).default([]),
+  highlights: z.array(websiteHighlightSchema).default([]),
   faqs: z.array(websiteFaqSchema).default([]),
+  featuredVehicleIds: z.array(z.string().uuid()).optional(),
 })
 
 export const websiteSiteUrlSchema = z.object({
@@ -228,7 +284,7 @@ export const websiteSiteUrlSchema = z.object({
 })
 
 export const supportTicketSchema = z.object({
-  patientId: z.string().uuid().optional().nullable(),
+  customerId: z.string().uuid().optional().nullable(),
   appointmentId: z.string().uuid().optional().nullable(),
   subject: z.string().min(2).max(200),
   description: z.string().max(5000).optional().nullable(),
@@ -238,7 +294,7 @@ export const supportTicketSchema = z.object({
 
 export const supportMessageSchema = z.object({
   ticketId: z.string().uuid(),
-  senderType: z.enum(['patient', 'staff', 'system']),
+  senderType: z.enum(['customer', 'staff', 'system']),
   content: z.string().min(1).max(10000),
 })
 
@@ -282,9 +338,11 @@ export const websiteSubscriberSchema = z.object({
 export type BusinessInput = z.infer<typeof businessSchema>
 export type BusinessSettingsInput = z.infer<typeof businessSettingsSchema>
 export type AvailabilityInput = z.infer<typeof availabilitySchema>
-export type ClinicServiceInput = z.infer<typeof clinicServiceSchema>
+export type ServiceInput = z.infer<typeof serviceSchema>
 export type AgentInput = z.infer<typeof agentSchema>
-export type PatientInput = z.infer<typeof patientSchema>
+export type CustomerInput = z.infer<typeof customerSchema>
+export type VehicleInput = z.infer<typeof vehicleSchema>
+export type DealInput = z.infer<typeof dealSchema>
 export type AppointmentCreateInput = z.infer<typeof appointmentCreateSchema>
 export type AppointmentStatusInput = z.infer<typeof appointmentStatusSchema>
 export type AppointmentRescheduleInput = z.infer<typeof appointmentRescheduleSchema>
@@ -296,7 +354,7 @@ export type WebsiteInput = z.infer<typeof websiteSchema>
 export type WebsiteServiceInput = z.infer<typeof websiteServiceSchema>
 export type WebsiteTeamMemberInput = z.infer<typeof websiteTeamMemberSchema>
 export type WebsiteTestimonialInput = z.infer<typeof websiteTestimonialSchema>
-export type WebsiteSpecialtyInput = z.infer<typeof websiteSpecialtySchema>
+export type WebsiteHighlightInput = z.infer<typeof websiteHighlightSchema>
 export type WebsiteFaqInput = z.infer<typeof websiteFaqSchema>
 export type SaveWebsiteContentInput = z.infer<typeof saveWebsiteContentSchema>
 export type WebsiteSiteUrlInput = z.infer<typeof websiteSiteUrlSchema>

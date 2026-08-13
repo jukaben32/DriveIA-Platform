@@ -16,7 +16,7 @@ export async function getWhatsappConnection(supabase: DbClient, businessId: stri
 }
 
 function buildInstanceName(businessId: string) {
-  return `clara-medical-${businessId}`
+  return `driveia-${businessId}`
 }
 
 export async function connectWhatsapp(

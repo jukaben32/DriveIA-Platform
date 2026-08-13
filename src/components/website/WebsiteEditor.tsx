@@ -7,6 +7,7 @@ import {
   ArrowUp,
   Briefcase,
   Building2,
+  CarFront,
   ChevronDown,
   ExternalLink,
   EyeOff,
@@ -27,8 +28,8 @@ import {
   TrendingUp,
   UsersRound,
 } from 'lucide-react'
-import type { AiAgent, WebsiteContent, WebsiteFaq, WebsiteService, WebsiteSpecialty, WebsiteTeamMember, WebsiteTestimonial } from '@/types'
-import { StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import type { AiAgent, Vehicle, WebsiteContent, WebsiteFaq, WebsiteService, WebsiteHighlight, WebsiteTeamMember, WebsiteTestimonial } from '@/types'
+import { StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 import { WebsiteTemplateRenderer } from './WebsiteTemplateRenderer'
 
 const TEMPLATE_CHOICES = [
@@ -112,8 +113,8 @@ function createTestimonial(businessId: string): WebsiteTestimonial {
   return {
     id: createId(),
     businessId,
-    quote: 'Patient feedback goes here.',
-    authorName: 'Patient Name',
+    quote: 'Customer feedback goes here.',
+    authorName: 'Customer Name',
     authorRole: null,
     rating: 5,
     sortOrder: 0,
@@ -122,11 +123,11 @@ function createTestimonial(businessId: string): WebsiteTestimonial {
   }
 }
 
-function createSpecialty(businessId: string): WebsiteSpecialty {
+function createHighlight(businessId: string): WebsiteHighlight {
   return {
     id: createId(),
     businessId,
-    label: 'New specialty',
+    label: 'New highlight',
     sortOrder: 0,
     createdAt: nowIso(),
   }
@@ -255,18 +256,23 @@ function UploadBox({
 export function WebsiteEditor({
   initialContent,
   agents,
+  vehicles,
   businessName,
 }: {
   initialContent: WebsiteContent
   agents: AiAgent[]
+  vehicles: Vehicle[]
   businessName: string
 }) {
   const [website, setWebsite] = useState<WebsiteModel>(initialContent.website)
   const [services, setServices] = useState<WebsiteService[]>(initialContent.services)
   const [teamMembers, setTeamMembers] = useState<WebsiteTeamMember[]>(initialContent.teamMembers)
   const [testimonials, setTestimonials] = useState<WebsiteTestimonial[]>(initialContent.testimonials)
-  const [specialties, setSpecialties] = useState<WebsiteSpecialty[]>(initialContent.specialties)
+  const [highlights, setHighlights] = useState<WebsiteHighlight[]>(initialContent.highlights)
   const [faqs, setFaqs] = useState<WebsiteFaq[]>(initialContent.faqs)
+  const [featuredVehicleIds, setFeaturedVehicleIds] = useState<string[]>(
+    initialContent.website.featuredVehicleIds ?? initialContent.vehicleHighlights.map((item) => item.vehicleId)
+  )
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -279,15 +285,29 @@ export function WebsiteEditor({
 
   const previewContent = useMemo<WebsiteContent>(
     () => ({
-      website,
+      website: { ...website, featuredVehicleIds },
       services,
       teamMembers,
       testimonials,
-      specialties,
+      highlights,
       faqs,
+      vehicleHighlights: vehicles
+        .filter((vehicle) => featuredVehicleIds.includes(vehicle.id))
+        .map((vehicle, index) => ({
+          id: vehicle.id,
+          businessId: vehicle.businessId,
+          vehicleId: vehicle.id,
+          sortOrder: index,
+          createdAt: vehicle.createdAt,
+          vehicle,
+        })),
     }),
-    [website, services, teamMembers, testimonials, specialties, faqs]
+    [website, services, teamMembers, testimonials, highlights, faqs, featuredVehicleIds, vehicles]
   )
+
+  function toggleFeaturedVehicle(vehicleId: string) {
+    setFeaturedVehicleIds((current) => (current.includes(vehicleId) ? current.filter((id) => id !== vehicleId) : [...current, vehicleId]))
+  }
 
   function patchWebsite(patch: Partial<WebsiteModel>) {
     setWebsite((current) => ({ ...current, ...patch }))
@@ -305,8 +325,8 @@ export function WebsiteEditor({
     setTestimonials((current) => current.map((item, i) => (i === index ? { ...item, ...patch } : item)))
   }
 
-  function patchSpecialty(index: number, patch: Partial<WebsiteSpecialty>) {
-    setSpecialties((current) => current.map((item, i) => (i === index ? { ...item, ...patch } : item)))
+  function patchHighlight(index: number, patch: Partial<WebsiteHighlight>) {
+    setHighlights((current) => current.map((item, i) => (i === index ? { ...item, ...patch } : item)))
   }
 
   function patchFaq(index: number, patch: Partial<WebsiteFaq>) {
@@ -389,8 +409,8 @@ export function WebsiteEditor({
     setTestimonials((current) => [...current, { ...createTestimonial(website.businessId), sortOrder: current.length }])
   }
 
-  function addSpecialty() {
-    setSpecialties((current) => [...current, { ...createSpecialty(website.businessId), sortOrder: current.length }])
+  function addHighlight() {
+    setHighlights((current) => [...current, { ...createHighlight(website.businessId), sortOrder: current.length }])
   }
 
   function addFaq() {
@@ -429,10 +449,11 @@ export function WebsiteEditor({
         contactHours: textOrNull(website.contactHours ?? ''),
         contactMapsUrl: textOrNull(website.contactMapsUrl ?? ''),
         yearsExperience: website.yearsExperience,
-        patientsServed: website.patientsServed,
+        customersServed: website.customersServed,
         satisfactionPct: website.satisfactionPct,
         trustBadges: website.trustBadges.map((item) => item.trim()).filter(Boolean),
         featuredServiceIds: website.featuredServiceIds,
+        featuredVehicleIds,
       },
       services: services.map((service, index) => ({
         id: service.id,
@@ -459,9 +480,9 @@ export function WebsiteEditor({
         rating: testimonial.rating,
         sortOrder: index,
       })),
-      specialties: specialties.map((specialty, index) => ({
-        id: specialty.id,
-        label: specialty.label,
+      highlights: highlights.map((highlight, index) => ({
+        id: highlight.id,
+        label: highlight.label,
         sortOrder: index,
       })),
       faqs: faqs.map((faq, index) => ({
@@ -470,6 +491,7 @@ export function WebsiteEditor({
         answer: faq.answer,
         sortOrder: index,
       })),
+      featuredVehicleIds,
     }
 
     const res = await fetch('/api/website/save', {
@@ -491,8 +513,9 @@ export function WebsiteEditor({
     setServices(next.services)
     setTeamMembers(next.teamMembers)
     setTestimonials(next.testimonials)
-    setSpecialties(next.specialties)
+    setHighlights(next.highlights)
     setFaqs(next.faqs)
+    setFeaturedVehicleIds(next.website.featuredVehicleIds ?? next.vehicleHighlights.map((item) => item.vehicleId))
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
     return true
@@ -636,7 +659,7 @@ export function WebsiteEditor({
                   value={website.heroHeadline ?? ''}
                   onChange={(e) => patchWebsite({ heroHeadline: e.target.value })}
                   className="input-field w-full"
-                  placeholder="Healthcare that feels premium and human"
+                  placeholder="Find your next vehicle, faster"
                 />
               </Field>
 
@@ -704,11 +727,11 @@ export function WebsiteEditor({
                     className="input-field w-full"
                   />
                 </Field>
-                <Field label="Patients served">
+                <Field label="Customers served">
                   <input
                     type="number"
-                    value={website.patientsServed ?? ''}
-                    onChange={(e) => patchWebsite({ patientsServed: e.target.value === '' ? null : Number(e.target.value) })}
+                    value={website.customersServed ?? ''}
+                    onChange={(e) => patchWebsite({ customersServed: e.target.value === '' ? null : Number(e.target.value) })}
                     className="input-field w-full"
                   />
                 </Field>
@@ -835,7 +858,54 @@ export function WebsiteEditor({
             </div>
           </SectionCard>
 
-          <SectionCard title="Team" subtitle="Clinician and staff cards shown in the live site." icon={UsersRound}>
+          <SectionCard title="Featured inventory" subtitle="Pick vehicles from your inventory to spotlight on the homepage." icon={CarFront}>
+            {vehicles.length === 0 ? (
+              <p className="text-xs text-[var(--text-muted)]">
+                No vehicles in inventory yet. Add vehicles from the Inventory tab, then come back here to feature them.
+              </p>
+            ) : (
+              <>
+                <p className="text-xs text-[var(--text-muted)]">{featuredVehicleIds.length} of {vehicles.length} vehicles featured</p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {vehicles.map((vehicle) => {
+                    const featured = featuredVehicleIds.includes(vehicle.id)
+                    return (
+                      <button
+                        key={vehicle.id}
+                        type="button"
+                        onClick={() => toggleFeaturedVehicle(vehicle.id)}
+                        className={`flex items-center justify-between gap-3 rounded-[20px] border p-3 text-left transition ${
+                          featured ? 'border-[var(--brand)] bg-[var(--brand-soft)]' : 'border-[var(--border-soft)] bg-white/75'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-sm font-bold text-[var(--text-strong)]">
+                            {vehicle.year} {vehicle.make} {vehicle.model}
+                          </div>
+                          <div className="text-[11px] text-[var(--text-muted)]">
+                            {vehicle.salePrice ? `$${vehicle.salePrice.toLocaleString()}` : vehicle.rentalDailyRate ? `$${vehicle.rentalDailyRate}/day` : 'Contact for price'}
+                            {' · '}
+                            {vehicle.status}
+                          </div>
+                        </div>
+                        <span
+                          className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-semibold ${
+                            featured
+                              ? 'border-[var(--brand)] bg-white text-[var(--brand-strong)]'
+                              : 'border-[var(--border-soft)] text-[var(--text-muted)]'
+                          }`}
+                        >
+                          {featured ? 'Featured' : 'Feature'}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Team" subtitle="Sales and rental staff cards shown in the live site." icon={UsersRound}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-[var(--text-muted)]">{teamMembers.length} team members</p>
               <button type="button" onClick={addTeamMember} className="btn-secondary !px-3 !py-2 !text-xs">
@@ -988,43 +1058,43 @@ export function WebsiteEditor({
             </div>
           </SectionCard>
 
-          <SectionCard title="Specialties" subtitle="These become the pill chips on the live page." icon={HelpCircle}>
+          <SectionCard title="Highlights" subtitle="Brand badges and quick trust chips shown on the live page (e.g. 'Certified pre-owned', 'Free delivery')." icon={HelpCircle}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs text-[var(--text-muted)]">{specialties.length} specialty chips</p>
-              <button type="button" onClick={addSpecialty} className="btn-secondary !px-3 !py-2 !text-xs">
+              <p className="text-xs text-[var(--text-muted)]">{highlights.length} highlight chips</p>
+              <button type="button" onClick={addHighlight} className="btn-secondary !px-3 !py-2 !text-xs">
                 <Plus className="h-3.5 w-3.5" />
-                Add specialty
+                Add highlight
               </button>
             </div>
             <div className="mt-4 space-y-3">
-              {specialties.map((specialty, index) => (
-                <div key={specialty.id} className="rounded-[22px] border border-[var(--border-soft)] bg-white/75 p-4 shadow-sm">
+              {highlights.map((highlight, index) => (
+                <div key={highlight.id} className="rounded-[22px] border border-[var(--border-soft)] bg-white/75 p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="text-sm font-bold text-[var(--text-strong)]">Specialty {index + 1}</div>
+                    <div className="text-sm font-bold text-[var(--text-strong)]">Highlight {index + 1}</div>
                     <div className="flex items-center gap-1">
                       <button
                         type="button"
-                        onClick={() => setSpecialties((current) => moveItem(current, index, index - 1))}
+                        onClick={() => setHighlights((current) => moveItem(current, index, index - 1))}
                         disabled={index === 0}
                         className="rounded-full border border-[var(--border-soft)] p-2 text-[var(--text-muted)] disabled:opacity-40"
-                        aria-label="Move specialty up"
+                        aria-label="Move highlight up"
                       >
                         <ArrowUp className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
-                        onClick={() => setSpecialties((current) => moveItem(current, index, index + 1))}
-                        disabled={index === specialties.length - 1}
+                        onClick={() => setHighlights((current) => moveItem(current, index, index + 1))}
+                        disabled={index === highlights.length - 1}
                         className="rounded-full border border-[var(--border-soft)] p-2 text-[var(--text-muted)] disabled:opacity-40"
-                        aria-label="Move specialty down"
+                        aria-label="Move highlight down"
                       >
                         <ArrowDown className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
-                        onClick={() => setSpecialties((current) => current.filter((_, i) => i !== index))}
+                        onClick={() => setHighlights((current) => current.filter((_, i) => i !== index))}
                         className="rounded-full border border-[var(--border-soft)] p-2 text-[var(--coral)]"
-                        aria-label="Remove specialty"
+                        aria-label="Remove highlight"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -1032,7 +1102,7 @@ export function WebsiteEditor({
                   </div>
                   <div className="mt-3">
                     <Field label="Label">
-                      <input value={specialty.label} onChange={(e) => patchSpecialty(index, { label: e.target.value })} className="input-field w-full" />
+                      <input value={highlight.label} onChange={(e) => patchHighlight(index, { label: e.target.value })} className="input-field w-full" />
                     </Field>
                   </div>
                 </div>

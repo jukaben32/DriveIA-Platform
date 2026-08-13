@@ -6,7 +6,7 @@ import type { Business, BusinessAvailability } from '@/types'
 import { DAYS_OF_WEEK } from '@/constants'
 import { createClient } from '@/lib/supabase/client'
 import { updateBusiness, upsertBusinessAvailability, addClosedDate, removeClosedDate } from '@/services/business'
-import { SectionEyebrow, SectionHeading, SurfaceCard, StatusBadge } from '@/components/clinic/shared'
+import { SectionEyebrow, SectionHeading, SurfaceCard, StatusBadge } from '@/components/dealer/shared'
 
 type ClosedDateRow = { id: string; blocked_date: string; reason: string | null }
 
@@ -104,15 +104,15 @@ export function SettingsManager({
     <div className="space-y-8">
       <SectionHeading
         eyebrow={<SectionEyebrow>Settings</SectionEyebrow>}
-        title="Set clinic hours and blocked dates"
+        title="Set dealership hours and blocked dates"
         description="The assistant checks these rules before showing slots so the widget always reflects the real availability."
       />
 
       <SurfaceCard className="p-6">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Clinic details</div>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Dealership details</div>
         <form onSubmit={handleSaveBusiness} className="mt-4 grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-[var(--text-strong)]">Clinic name</label>
+            <label className="text-sm font-semibold text-[var(--text-strong)]">Dealership name</label>
             <input value={businessForm.name} onChange={(e) => setBusinessForm((f) => ({ ...f, name: e.target.value }))} className="input-field w-full" />
           </div>
           <div className="space-y-2">
@@ -125,7 +125,7 @@ export function SettingsManager({
           </div>
           <div className="sm:col-span-3 flex items-center gap-3">
             <button type="submit" disabled={savingBusiness} className="btn-primary">
-              {savingBusiness ? 'Saving…' : 'Save clinic details'}
+              {savingBusiness ? 'Saving…' : 'Save Dealership details'}
             </button>
             {businessSaved && <span className="text-sm font-medium" style={{ color: 'var(--brand-strong)' }}>Saved.</span>}
           </div>
@@ -199,7 +199,7 @@ export function SettingsManager({
             <div className="mt-6 space-y-2">
               {closedDates.length === 0 && (
                 <div className="border border-dashed border-[var(--border-soft)] bg-[var(--panel)] px-4 py-10 text-center text-sm text-[var(--text-muted)]">
-                  No dates blocked. Add a holiday or clinic closure above.
+                  No dates blocked. Add a holiday or dealership closure above.
                 </div>
               )}
               {closedDates.map((d) => (

@@ -2,13 +2,13 @@ import type { SupportMessage, SupportTicket } from '@/types'
 import type { DbClient } from './_shared'
 
 function toTicket(row: any): SupportTicket {
-  const patientRow = Array.isArray(row.patients) ? row.patients[0] ?? null : row.patients ?? null
+  const customerRow = Array.isArray(row.customers) ? row.customers[0] ?? null : row.customers ?? null
   const appointmentRow = Array.isArray(row.appointments) ? row.appointments[0] ?? null : row.appointments ?? null
 
   return {
     id: row.id,
     businessId: row.business_id,
-    patientId: row.patient_id ?? null,
+    customerId: row.customer_id ?? null,
     appointmentId: row.appointment_id ?? null,
     subject: row.subject,
     description: row.description ?? null,
@@ -16,11 +16,11 @@ function toTicket(row: any): SupportTicket {
     priority: row.priority,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    patient: patientRow
+    customer: customerRow
       ? {
-          name: patientRow.name,
-          email: patientRow.email ?? null,
-          phone: patientRow.phone ?? null,
+          name: customerRow.name,
+          email: customerRow.email ?? null,
+          phone: customerRow.phone ?? null,
         }
       : null,
     appointment: appointmentRow
@@ -47,7 +47,7 @@ function toMessage(row: any): SupportMessage {
 export async function listSupportTickets(supabase: DbClient, businessId: string, limit = 50) {
   const { data, error } = await supabase
     .from('support_tickets')
-    .select('*, patients(name, email, phone), appointments(id, scheduled_at, status)')
+    .select('*, customers(name, email, phone), appointments(id, scheduled_at, status)')
     .eq('business_id', businessId)
     .order('updated_at', { ascending: false })
     .limit(limit)
@@ -58,7 +58,7 @@ export async function listSupportTickets(supabase: DbClient, businessId: string,
 export async function getSupportTicket(supabase: DbClient, businessId: string, ticketId: string) {
   const { data, error } = await supabase
     .from('support_tickets')
-    .select('*, patients(name, email, phone), appointments(id, scheduled_at, status)')
+    .select('*, customers(name, email, phone), appointments(id, scheduled_at, status)')
     .eq('business_id', businessId)
     .eq('id', ticketId)
     .maybeSingle()
@@ -70,7 +70,7 @@ export async function createSupportTicket(
   supabase: DbClient,
   businessId: string,
   input: {
-    patientId?: string | null
+    customerId?: string | null
     appointmentId?: string | null
     subject: string
     description?: string | null
@@ -82,7 +82,7 @@ export async function createSupportTicket(
     .from('support_tickets')
     .insert({
       business_id: businessId,
-      patient_id: input.patientId ?? null,
+      customer_id: input.customerId ?? null,
       appointment_id: input.appointmentId ?? null,
       subject: input.subject,
       description: input.description ?? null,

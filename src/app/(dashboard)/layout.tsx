@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getBusinessForUser, createBusiness } from '@/services/business'
-import { DashboardChrome } from '@/components/clinic/DashboardChrome'
+import { DashboardChrome } from '@/components/dealer/DashboardChrome'
 import { getErrorMessage } from '@/lib/utils'
 
 function ErrorScreen({ title, body, detail }: { title: string; body: string; detail: string }) {
@@ -51,7 +51,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     return <ErrorScreen title="We couldn't load your business" body="Please try signing in again, or contact support if this keeps happening." detail={getErrorMessage(err)} />
   }
 
-  // Signup can't create the clinic itself when Supabase requires email
+  // Signup can't create the business itself when Supabase requires email
   // confirmation (no session exists yet at signup time — RLS needs
       // auth.uid()) — it stashes business_name/full_name in the auth user's
   // metadata instead and defers creation to here, the first authenticated
@@ -60,7 +60,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   // signUp() on an already-registered email returns the "already exists"
   // error instead of creating anything, so the user could never get in.
   if (!business) {
-    const businessName = (user.user_metadata?.business_name as string | undefined)?.trim() ?? (user.user_metadata?.clinic_name as string | undefined)?.trim()
+    const businessName = (user.user_metadata?.business_name as string | undefined)?.trim()
     if (!businessName) redirect('/signup')
     try {
       // Confirmed with a live query against the production database: the

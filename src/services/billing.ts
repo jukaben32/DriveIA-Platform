@@ -6,7 +6,7 @@ function toBilling(row: any): BillingTransaction {
     id: row.id,
     businessId: row.business_id,
     appointmentId: row.appointment_id ?? null,
-    patientId: row.patient_id ?? null,
+    customerId: row.customer_id ?? null,
     amount: row.amount,
     currency: row.currency,
     chainId: row.chain_id,
@@ -62,7 +62,7 @@ export async function recordBillingTransaction(
   businessId: string,
   input: {
     appointmentId?: string | null
-    patientId?: string | null
+    customerId?: string | null
     amount: number
     currency: string
     chainId: number
@@ -77,7 +77,7 @@ export async function recordBillingTransaction(
     .insert({
       business_id: businessId,
       appointment_id: input.appointmentId ?? null,
-      patient_id: input.patientId ?? null,
+      customer_id: input.customerId ?? null,
       amount: input.amount,
       currency: input.currency,
       chain_id: input.chainId,

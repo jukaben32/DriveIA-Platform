@@ -33,7 +33,7 @@ import Textarea from '@/components/ui/Textarea'
 import Toggle from '@/components/ui/Toggle'
 import Toast from '@/components/ui/Toast'
 import Tabs from '@/components/ui/Tabs'
-import { MetricCard, SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard, ValueCard, PhoneFrame } from '@/components/clinic/shared'
+import { MetricCard, SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard, ValueCard, PhoneFrame } from '@/components/dealer/shared'
 
 type ToastTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
 
@@ -560,7 +560,7 @@ function WidgetWizardModal({
       open
       onClose={onClose}
       title={isEdit ? 'Edit Widget' : 'Create Widget'}
-      description={isEdit ? 'Step 1 of 1 - widget settings' : 'Build a widget that matches the clinic brand'}
+      description={isEdit ? 'Step 1 of 1 - widget settings' : 'Build a widget that matches the dealership brand'}
       className="max-w-5xl"
     >
       <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
@@ -597,7 +597,7 @@ function WidgetWizardModal({
                 Widget Settings
               </div>
               <h3 className="mt-2 text-2xl font-display font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
-                Make the embed feel native to the clinic
+                Make the embed feel native to the dealership
               </h3>
             </div>
             <StatusBadge tone={form.enabled ? 'emerald' : 'slate'}>
@@ -936,7 +936,7 @@ function WidgetTemplateCard({
           <h3 className="mt-4 font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text-strong)]">
             {agent.name}
           </h3>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">{agent.title ?? agent.specialty ?? 'Clinic assistant'}</p>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">{agent.title ?? agent.specialty ?? 'Dealership assistant'}</p>
         </div>
         <div className="grid h-11 w-11 place-items-center rounded-[16px] border border-[var(--border-soft)] bg-[rgba(15,118,110,0.06)]">
           <Sparkles className="h-5 w-5" style={{ color: accent }} />
@@ -1235,7 +1235,7 @@ export function WidgetManager({
     <div className="space-y-8">
       <SectionHeading
         eyebrow={<SectionEyebrow>Widget</SectionEyebrow>}
-        title="Embed the AI booking assistant on the clinic website"
+        title="Embed the AI booking assistant on the dealership website"
         description="Create widgets per agent, preview the live launcher, and copy script, React, or full HTML snippets in one place."
         actions={
           <Button onClick={() => openCreate()} className="inline-flex items-center gap-2">
@@ -1273,7 +1273,7 @@ export function WidgetManager({
                   <MonitorSmartphone className="h-6 w-6" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-[var(--text-strong)]">No widgets yet</h3>
-                <p className="mt-2 text-sm text-[var(--text-muted)]">Create the first widget to generate the embed code for the clinic website.</p>
+                <p className="mt-2 text-sm text-[var(--text-muted)]">Create the first widget to generate the embed code for the dealership website.</p>
                 <div className="mt-5">
                   <Button onClick={() => openCreate()}>
                     <Plus className="mr-2 h-4 w-4" />
@@ -1365,7 +1365,7 @@ export function WidgetManager({
           <div>
             <SectionEyebrow>Widget Templates</SectionEyebrow>
             <div className="mt-3 text-sm text-[var(--text-muted)]">
-              One-click templates derived from the live AI agents in the clinic.
+              One-click templates derived from the live AI agents in the dealership.
             </div>
           </div>
           <Badge tone="slate" className="bg-white/90 normal-case tracking-normal">

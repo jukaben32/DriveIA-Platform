@@ -21,7 +21,7 @@ import {
 import { DEFAULT_WELCOME_MESSAGE } from '@/constants'
 import { createClient } from '@/lib/supabase/client'
 import { cn, formatCurrency, toTitleCase } from '@/lib/utils'
-import type { AiAgent, ClinicService } from '@/types'
+import type { AiAgent, Service } from '@/types'
 import { createAgent, deleteAgent, setAgentStatus, updateAgent } from '@/services/agents'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
@@ -30,7 +30,7 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Textarea from '@/components/ui/Textarea'
 import Toast from '@/components/ui/Toast'
-import { MetricCard, SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import { MetricCard, SectionEyebrow, SectionHeading, StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 import {
   AGENT_TEMPLATES,
   DEFAULT_AGENT_PROMPT,
@@ -43,7 +43,7 @@ import {
   type AgentSensitivityPreset,
   type AgentTemplate,
   type AgentTemplateCategory,
-} from '@/components/clinic/agent-templates'
+} from '@/components/dealer/agent-templates'
 
 type ToastTone = 'teal' | 'emerald' | 'blue' | 'amber' | 'rose' | 'slate'
 
@@ -84,11 +84,11 @@ const STATUS_PRIORITY: Record<AiAgent['status'], number> = {
   draft: 2,
 }
 
-function getAgentServiceNames(agent: AiAgent, services: ClinicService[]) {
+function getAgentServiceNames(agent: AiAgent, services: Service[]) {
   const map = new Map(services.map((service) => [service.id, service] as const))
   const labels = (agent.assignedServiceIds ?? [])
     .map((serviceId) => map.get(serviceId))
-    .filter((service): service is ClinicService => Boolean(service))
+    .filter((service): service is Service => Boolean(service))
     .map((service) => service.name)
 
   return labels
@@ -285,7 +285,7 @@ function AgentWizardModal({
   mode: 'create' | 'edit'
   agent: AiAgent | null
   template: AgentTemplate | null
-  services: ClinicService[]
+  services: Service[]
   businessId: string
   onClose: () => void
   onSaved: (agent: AiAgent) => void
@@ -729,7 +729,7 @@ function AgentRow({
   onDelete,
 }: {
   agent: AiAgent
-  services: ClinicService[]
+  services: Service[]
   onEdit: () => void
   onToggleStatus: () => void
   onDelete: () => void
@@ -752,7 +752,7 @@ function AgentRow({
             <StatusBadge tone={STATUS_TONE[agent.status]}>{STATUS_LABEL[agent.status]}</StatusBadge>
           </div>
           <div className="mt-1 text-sm text-[var(--text-muted)]">
-            {agent.title ?? agent.specialty ?? 'Clinic agent'}
+            {agent.title ?? agent.specialty ?? 'Dealership agent'}
           </div>
         </div>
       </div>
@@ -829,7 +829,7 @@ export function AgentsManager({
 }: {
   initialAgents: AiAgent[]
   businessId: string
-  services: ClinicService[]
+  services: Service[]
 }) {
   const [agents, setAgents] = useState(initialAgents)
   const [category, setCategory] = useState<AgentTemplateCategory>('all')

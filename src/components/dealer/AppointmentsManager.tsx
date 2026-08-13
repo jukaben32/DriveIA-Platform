@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronRight, Search } from 'lucide-react'
 import type { AppointmentStatus, AppointmentWithRelations } from '@/types'
-import { SurfaceCard, StatusBadge, Pill } from '@/components/clinic/shared'
+import { SurfaceCard, StatusBadge, Pill } from '@/components/dealer/shared'
 import { cn, formatCurrency } from '@/lib/utils'
 import { AppointmentDetailsDrawer } from './AppointmentDetailsDrawer'
 import {
@@ -26,11 +26,11 @@ const STATUS_FILTERS: Array<{ label: string; value: AppointmentStatus | 'all' }>
 
 function buildSearchIndex(appointment: AppointmentWithRelations) {
   return [
-    appointment.patient?.name,
-    appointment.patient?.phone,
-    appointment.patient?.email,
-    appointment.patient?.insuranceProvider,
-    appointment.patient?.dateOfBirth,
+    appointment.customer?.name,
+    appointment.customer?.phone,
+    appointment.customer?.email,
+    appointment.customer?.driversLicenseNumber,
+    appointment.customer?.dateOfBirth,
     appointment.service?.name,
     appointment.notes,
     appointment.source,
@@ -143,10 +143,10 @@ export function AppointmentsManager({
                 Appointments
               </div>
               <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-[var(--text-strong)]">
-                Manage bookings, call outcomes, and clinic payments
+                Manage bookings, call outcomes, and dealership payments
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--text-muted)]">
-                Review patient bookings in real time, inspect the appointment drawer, and keep cash or partial payments in sync with the schedule.
+                Review customer bookings in real time, inspect the appointment drawer, and keep cash or partial payments in sync with the schedule.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Pill tone="teal">{summary.total} total</Pill>
@@ -158,7 +158,7 @@ export function AppointmentsManager({
 
             {businessName ? (
               <div className="hidden rounded-[24px] border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-right backdrop-blur-sm lg:block">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Clinic</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Dealership</div>
                 <div className="mt-1 font-display text-lg font-semibold tracking-[-0.03em] text-[var(--text-strong)]">{businessName}</div>
               </div>
             ) : null}
@@ -197,8 +197,8 @@ export function AppointmentsManager({
                 gridTemplateColumns: 'minmax(220px, 1.3fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(150px, 0.9fr) minmax(130px, 0.85fr) 56px',
               }}
             >
-              <div>Patient</div>
-              <div>Insurance / DOB</div>
+              <div>Customer</div>
+              <div>License / DOB</div>
               <div>Service</div>
               <div>Scheduled</div>
               <div>Payment</div>
@@ -229,19 +229,19 @@ export function AppointmentsManager({
                     >
                       <div className="min-w-0">
                         <div className="truncate font-semibold text-[var(--text-strong)]">
-                          {appointment.patient?.name ?? 'Unknown patient'}
+                          {appointment.customer?.name ?? 'Unknown customer'}
                         </div>
                         <div className="mt-1 truncate text-xs text-[var(--text-muted)]">
-                          {appointment.patient?.phone ?? appointment.patient?.email ?? 'No contact on file'}
+                          {appointment.customer?.phone ?? appointment.customer?.email ?? 'No contact on file'}
                         </div>
                       </div>
 
                       <div className="min-w-0">
                         <div className="truncate font-semibold text-[var(--text-strong)]">
-                          {appointment.patient?.insuranceProvider ?? 'Self pay'}
+                          {appointment.customer?.driversLicenseNumber ?? 'Self pay'}
                         </div>
                         <div className="mt-1 truncate text-xs text-[var(--text-muted)]">
-                          DOB: {appointment.patient?.dateOfBirth ?? 'N/A'}
+                          DOB: {appointment.customer?.dateOfBirth ?? 'N/A'}
                         </div>
                       </div>
 

@@ -4,26 +4,25 @@ import {
   ArrowRight,
   Building2,
   CalendarDays,
+  CarFront,
   CheckCircle2,
   ChevronDown,
   Clock3,
   FileText,
-  HeartPulse,
+  Gauge,
   Home,
   Key,
   Mail,
   MapPin,
   Phone,
   Star,
-  Stethoscope,
-  UsersRound,
   ClipboardList,
   TrendingUp,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import type { WebsiteContent } from '@/types'
-import { SurfaceCard } from '@/components/clinic/shared'
+import { SurfaceCard } from '@/components/dealer/shared'
 
 const TEMPLATE_STYLES: Record<
   string,
@@ -194,7 +193,8 @@ export function WebsiteTemplateRenderer({
   content: WebsiteContent
   isEditorPreview?: boolean
 }) {
-  const { website, services, teamMembers, testimonials, specialties, faqs } = content
+  const { website, services, teamMembers, testimonials, highlights, faqs, vehicleHighlights } = content
+  const featuredVehicles = vehicleHighlights.map((item) => item.vehicle).filter((vehicle): vehicle is NonNullable<typeof vehicle> => Boolean(vehicle))
   const style = TEMPLATE_STYLES[website.template] ?? TEMPLATE_STYLES.clarity
   const fontKey = normalizeFont(website.font)
   const fontFamily = FONT_STACKS[fontKey] ?? FONT_STACKS.inter
@@ -217,7 +217,7 @@ export function WebsiteTemplateRenderer({
               className="grid h-10 w-10 place-items-center rounded-2xl text-white shadow-lg"
               style={{ background: `linear-gradient(135deg, ${website.primaryColor}, ${website.secondaryColor})` }}
             >
-              <HeartPulse className="h-5 w-5" />
+              <CarFront className="h-5 w-5" />
             </span>
             <div>
               <p className="text-sm font-extrabold tracking-[-0.03em]">{website.siteTitle || businessName}</p>
@@ -228,6 +228,7 @@ export function WebsiteTemplateRenderer({
           </div>
 
           <nav className="hidden items-center gap-6 text-sm font-medium lg:flex" style={{ color: style.subtext }}>
+            {featuredVehicles.length > 0 ? <a href="#inventory">Inventory</a> : null}
             <a href="#services">Services</a>
             <a href="#about">About</a>
             <a href="#team">Team</a>
@@ -291,7 +292,7 @@ export function WebsiteTemplateRenderer({
 
               <div className="mt-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <StatCard label="Years experience" value={String(website.yearsExperience ?? 0)} accent={website.primaryColor} />
-                <StatCard label="Vehicles served" value={String(website.patientsServed ?? 0)} accent={website.primaryColor} />
+                <StatCard label="Customers served" value={String(website.customersServed ?? 0)} accent={website.primaryColor} />
                 <StatCard
                   label="Satisfaction"
                   value={website.satisfactionPct != null ? `${Math.round(website.satisfactionPct)}%` : '—'}
@@ -310,7 +311,7 @@ export function WebsiteTemplateRenderer({
                   <div>
                     <p className="text-sm font-bold">Overview</p>
                     <p className="text-xs" style={{ color: style.subtext }}>
-                      Practice performance at a glance
+                      Dealership performance at a glance
                     </p>
                   </div>
                   <span
@@ -331,7 +332,7 @@ export function WebsiteTemplateRenderer({
                         <img src={website.heroImageUrl} alt="" className="h-full w-full rounded-[20px] object-cover" />
                       ) : isEditorPreview ? (
                         <div>
-                          <Stethoscope className="mx-auto h-10 w-10 opacity-40" />
+                          <CarFront className="mx-auto h-10 w-10 opacity-40" />
                           <p className="mt-3 text-sm" style={{ color: style.subtext }}>
                             Upload a hero image in the editor
                           </p>
@@ -356,6 +357,76 @@ export function WebsiteTemplateRenderer({
             </div>
           </div>
         </section>
+
+        {featuredVehicles.length > 0 && (
+          <SectionBlock id="inventory" bg={style.cardBg}>
+            <SectionTitle
+              eyebrow="Inventory"
+              title="Featured vehicles"
+              description="A snapshot of what's on the lot right now. Reach out to schedule a test drive or check current availability."
+            />
+            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {featuredVehicles.map((vehicle) => {
+                const photo = vehicle.photoUrls[0] ?? null
+                const price =
+                  vehicle.salePrice != null
+                    ? `$${vehicle.salePrice.toLocaleString()}`
+                    : vehicle.rentalDailyRate != null
+                    ? `$${vehicle.rentalDailyRate.toLocaleString()}/day`
+                    : 'Contact for price'
+                return (
+                  <SurfaceCard key={vehicle.id} className="overflow-hidden p-0" style={{ backgroundColor: style.cardBg, borderColor: style.border }}>
+                    <div className="flex h-44 items-center justify-center border-b" style={{ borderColor: style.border, backgroundColor: style.bg }}>
+                      {photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={photo} alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} className="h-full w-full object-cover" />
+                      ) : (
+                        <CarFront className="h-10 w-10 opacity-30" />
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-lg font-bold tracking-[-0.02em]">
+                            {vehicle.year} {vehicle.make} {vehicle.model}
+                          </h3>
+                          {vehicle.trim ? (
+                            <p className="text-xs uppercase tracking-[0.18em]" style={{ color: style.subtext }}>
+                              {vehicle.trim}
+                            </p>
+                          ) : null}
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em]"
+                          style={{ borderColor: style.border, color: website.primaryColor }}
+                        >
+                          {vehicle.condition === 'new' ? 'New' : vehicle.condition === 'certified_pre_owned' ? 'Certified' : 'Used'}
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-center gap-2 text-sm" style={{ color: style.subtext }}>
+                        <Gauge className="h-4 w-4" />
+                        {vehicle.mileage != null ? `${vehicle.mileage.toLocaleString()} mi` : 'Mileage on request'}
+                      </div>
+                      <div className="mt-5 flex items-center justify-between">
+                        <span className="text-lg font-black" style={{ color: website.primaryColor }}>
+                          {price}
+                        </span>
+                        <a
+                          href="#contact"
+                          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold text-white"
+                          style={{ background: `linear-gradient(135deg, ${website.primaryColor}, ${website.secondaryColor})` }}
+                        >
+                          {website.ctaPrimaryText}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  </SurfaceCard>
+                )
+              })}
+            </div>
+          </SectionBlock>
+        )}
 
         {services.length > 0 && (
           <SectionBlock id="services">
@@ -446,8 +517,8 @@ export function WebsiteTemplateRenderer({
           <SectionBlock id="team">
             <SectionTitle
               eyebrow="Team"
-              title="Meet the people behind the care"
-              description="A polished staff section makes the clinic feel established and trustworthy."
+              title="Meet the team"
+              description="A polished staff section makes the dealership feel established and trustworthy."
               center
             />
             <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -508,23 +579,23 @@ export function WebsiteTemplateRenderer({
           </SectionBlock>
         )}
 
-        {specialties.length > 0 && (
+        {highlights.length > 0 && (
           <SectionBlock>
             <SectionTitle
-              eyebrow="Specialties"
-              title="Areas of care"
+              eyebrow="Highlights"
+              title="Why customers choose us"
               description="A compact chip grid keeps the site feeling structured and easy to scan."
               center
             />
             <div className="mt-8 flex flex-wrap justify-center gap-2.5">
-              {specialties.map((specialty) => (
+              {highlights.map((highlight) => (
                 <span
-                  key={specialty.id}
+                  key={highlight.id}
                   className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold"
                   style={{ borderColor: style.border, backgroundColor: style.cardBg }}
                 >
                   <CheckCircle2 className="h-4 w-4" style={{ color: website.primaryColor }} />
-                  {specialty.label}
+                  {highlight.label}
                 </span>
               ))}
             </div>

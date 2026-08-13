@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, ArrowLeft, MailCheck, Rocket } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { createBusiness } from '@/services/business'
-import { BrandMark, SectionEyebrow, SurfaceCard } from '@/components/clinic/shared'
+import { BrandMark, SectionEyebrow, SurfaceCard } from '@/components/dealer/shared'
 import { getErrorMessage } from '@/lib/utils'
 
 export default function SignupPage() {
   const router = useRouter()
   const [fullName, setFullName] = useState('')
-  const [clinicName, setClinicName] = useState('')
+  const [businessName, setBusinessName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
@@ -19,7 +19,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   // Set once signUp() succeeds but Supabase requires email confirmation
-  // before a session exists — the clinic can't be created yet (RLS needs an
+  // before a session exists — the business can't be created yet (RLS needs an
   // authenticated session), so it's created the first time this account
   // actually logs in with a session (see the dashboard layout).
   const [pendingEmail, setPendingEmail] = useState<string | null>(null)
@@ -46,7 +46,7 @@ export default function SignupPage() {
         email,
         password,
         options: {
-          data: { full_name: fullName, clinic_name: clinicName },
+          data: { full_name: fullName, business_name: businessName },
           // Must point at /api/auth/callback, not straight at /login — that
           // route is what actually calls exchangeCodeForSession() to turn the
           // confirmation link's code into a real session. Pointing directly
@@ -76,7 +76,7 @@ export default function SignupPage() {
 
       await createBusiness(supabase, {
         ownerId: data.user!.id,
-        name: clinicName,
+        name: businessName,
         contactEmail: email,
         phone: phone || null,
       })
@@ -136,7 +136,7 @@ export default function SignupPage() {
               <input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Dr. Jane Doe"
+                placeholder="Jane Doe"
                 className="input-field"
                 required
               />
@@ -144,8 +144,8 @@ export default function SignupPage() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-[var(--text-strong)]">Business name</label>
               <input
-                value={clinicName}
-                onChange={(e) => setClinicName(e.target.value)}
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="DriveIA Motors"
                 className="input-field"
                 required

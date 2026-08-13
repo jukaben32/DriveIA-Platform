@@ -1,12 +1,12 @@
-import type { AppointmentSource, Business, ClinicService, KnowledgeDocument, Patient } from '@/types'
+import type { AppointmentSource, Business, Customer, KnowledgeDocument, Service } from '@/types'
 import { buildAppointmentConfirmationEmail } from '@/lib/email/appointmentConfirmation'
 import { buildAppointmentStatusEmail } from '@/lib/email/appointmentStatus'
 import { sendEmail } from '@/lib/resend'
 import { createAppointment, cancelAppointment, confirmAppointment, getAvailableSlots, recordAppointmentPayment, rescheduleAppointment } from '@/services/appointments'
-import { createNotification } from '@/services/notifications'
 import { createSupportTicket } from '@/services/support'
-import { findOrCreatePatient, getPatientByEmail, searchPatients } from '@/services/patients'
-import { listActiveClinicServices } from '@/services/services'
+import { findOrCreateCustomer, getCustomerByEmail } from '@/services/customers'
+import { listActiveServices } from '@/services/services'
+import { searchVehicleInventory, getVehicleById } from '@/services/vehicles'
 import { listKnowledgeDocuments, searchKnowledgeDocuments } from '@/services/faqs'
 import { getBusinessById } from '@/services/business'
 import type { DbClient } from '@/services/_shared'
@@ -18,11 +18,41 @@ export interface RealtimeToolDefinition {
   parameters: Record<string, unknown>
 }
 
-export const clinicRealtimeTools: RealtimeToolDefinition[] = [
+export const dealerRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
-    name: 'list_clinic_services',
-    description: 'List active clinic services with durations and pricing.',
+    name: 'search_vehicle_inventory',
+    description: 'Search the dealership vehicle inventory by make, body type, listing type (sale or rental), max price, or minimum year.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Free text search across make, model, and trim.' },
+        make: { type: 'string' },
+        bodyType: { type: 'string', enum: ['sedan', 'suv', 'truck', 'van', 'coupe', 'convertible', 'hatchback', 'wagon', 'other'] },
+        listingType: { type: 'string', enum: ['sale', 'rental', 'both'] },
+        maxPrice: { type: 'number' },
+        minYear: { type: 'integer' },
+      },
+      additionalProperties: false,
+    },
+  },
+  {
+    type: 'function',
+    name: 'get_vehicle_details',
+    description: 'Get full details for a single vehicle by id, including price, mileage, features, and status.',
+    parameters: {
+      type: 'object',
+      properties: {
+        vehicleId: { type: 'string' },
+      },
+      required: ['vehicleId'],
+      additionalProperties: false,
+    },
+  },
+  {
+    type: 'function',
+    name: 'list_services',
+    description: 'List active dealership services (financing, trade-ins, protection plans) with durations and pricing.',
     parameters: {
       type: 'object',
       properties: {},
@@ -32,7 +62,7 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
     name: 'get_available_slots',
-    description: 'Get available appointment slots for a service.',
+    description: 'Get available appointment slots for a service (test drive, consultation, delivery, etc).',
     parameters: {
       type: 'object',
       properties: {
@@ -45,14 +75,15 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   },
   {
     type: 'function',
-    name: 'find_or_create_patient',
-    description: 'Find an existing patient or create a new patient record.',
+    name: 'find_or_create_customer',
+    description: 'Find an existing customer/lead or create a new customer record.',
     parameters: {
       type: 'object',
       properties: {
         name: { type: 'string' },
         email: { type: 'string' },
         phone: { type: 'string' },
+        interestType: { type: 'string', enum: ['purchase', 'rental', 'lease', 'trade_in', 'service', 'undecided'] },
       },
       required: ['name'],
       additionalProperties: false,
@@ -61,20 +92,22 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
     name: 'create_appointment',
-    description: 'Create a clinic appointment after confirming service and time.',
+    description: 'Create an appointment (test drive, sales consultation, delivery, trade-in appraisal, or service) after confirming vehicle/service and time.',
     parameters: {
       type: 'object',
       properties: {
-        patientId: { type: 'string' },
-        patientName: { type: 'string' },
-        patientEmail: { type: 'string' },
-        patientPhone: { type: 'string' },
+        customerId: { type: 'string' },
+        customerName: { type: 'string' },
+        customerEmail: { type: 'string' },
+        customerPhone: { type: 'string' },
         serviceId: { type: 'string' },
+        vehicleId: { type: 'string' },
+        appointmentType: { type: 'string', enum: ['test_drive', 'sales_consultation', 'service', 'delivery', 'trade_in_appraisal', 'other'] },
         scheduledAt: { type: 'string' },
         notes: { type: 'string' },
         source: { type: 'string' },
       },
-      required: ['serviceId', 'scheduledAt'],
+      required: ['scheduledAt'],
       additionalProperties: false,
     },
   },
@@ -122,7 +155,7 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
     name: 'search_faqs',
-    description: 'Search the clinic knowledge base for an answer.',
+    description: 'Search the dealership knowledge base for an answer (financing, warranties, rentals, trade-ins, delivery).',
     parameters: {
       type: 'object',
       properties: {
@@ -135,11 +168,11 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
     name: 'create_support_ticket',
-    description: 'Open a support ticket for a patient or staff follow-up.',
+    description: 'Open a support ticket for a customer or staff follow-up.',
     parameters: {
       type: 'object',
       properties: {
-        patientId: { type: 'string' },
+        customerId: { type: 'string' },
         appointmentId: { type: 'string' },
         subject: { type: 'string' },
         description: { type: 'string' },
@@ -151,12 +184,12 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
     name: 'record_payment',
-    description: 'Record a billing transaction and link it to an appointment if needed.',
+    description: 'Record a billing transaction (deposit, rental payment) and link it to an appointment if needed.',
     parameters: {
       type: 'object',
       properties: {
         appointmentId: { type: 'string' },
-        patientId: { type: 'string' },
+        customerId: { type: 'string' },
         amount: { type: 'number' },
         currency: { type: 'string' },
         chainId: { type: 'integer' },
@@ -170,7 +203,7 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   {
     type: 'function',
     name: 'send_appointment_email',
-    description: 'Send a booking confirmation or appointment status email to the patient.',
+    description: 'Send a booking confirmation or appointment status email to the customer.',
     parameters: {
       type: 'object',
       properties: {
@@ -185,9 +218,9 @@ export const clinicRealtimeTools: RealtimeToolDefinition[] = [
   },
 ]
 
-export function buildClinicAssistantInstructions(opts: {
+export function buildDealerAssistantInstructions(opts: {
   business: Business
-  services: ClinicService[]
+  services: Service[]
   faqs: KnowledgeDocument[]
   timezone?: string | null
 }) {
@@ -203,10 +236,10 @@ export function buildClinicAssistantInstructions(opts: {
   return [
     `You are DriveIA, the AI mobility concierge for ${opts.business.name}.`,
     `Be warm, concise, and practical. Do not provide legal, safety, or mechanical advice beyond the knowledge base.`,
-    `Your job is to help customers compare vehicles, book test drives, reserve rentals, request trade-in valuations, and understand financing, service, and protection options.`,
+    `Your job is to help customers search live inventory, compare vehicles, book test drives, reserve rentals, request trade-in valuations, and understand financing, service, and protection options. Use search_vehicle_inventory and get_vehicle_details before recommending a specific vehicle — never invent inventory that has not been returned by those tools.`,
     `Always ask for the minimum required customer details and confirm date and time in the business timezone.`,
     `Business timezone: ${opts.timezone || opts.business.timezone || 'America/New_York'}.`,
-    `Clinic services:\n${serviceList || '- No active services configured yet.'}`,
+    `Available services:\n${serviceList || '- No active services configured yet.'}`,
     `FAQs:\n${faqList || '- No FAQs configured yet.'}`,
     `If a request is unsafe, highly time-sensitive, or requires a human decision, advise the customer to contact the dealership or rental team immediately.`,
     `If a human handoff is needed, summarize the request clearly and mark the conversation as escalated.`,
@@ -233,39 +266,40 @@ export function buildRealtimeSessionPayload(opts: {
     temperature: 0.4,
     modalities: ['text', 'audio'],
     language: opts.language || 'en',
-    tools: clinicRealtimeTools,
+    tools: dealerRealtimeTools,
   }
 }
 
 async function sendAppointmentEmailForTool(supabase: DbClient, appointmentId: string, type: 'confirmation' | 'status_update', reason?: string | null) {
   const { data: appointmentRow, error: appointmentError } = await supabase
     .from('appointments')
-    .select('*, patients(*), clinic_services(*), businesses(name, slug, booking_email)')
+    .select('*, customers(*), services(*), vehicles(*), businesses(name, slug, booking_email)')
     .eq('id', appointmentId)
     .maybeSingle()
   if (appointmentError) throw appointmentError
   if (!appointmentRow) throw new Error('Appointment not found')
 
   const appointment: any = appointmentRow
-  const patientEmail = appointment.patients?.email
-  if (!patientEmail) throw new Error('Patient email not found')
+  const customerEmail = appointment.customers?.email
+  if (!customerEmail) throw new Error('Customer email not found')
 
-  const businessName = appointment.businesses?.name || 'Clinic'
-  const serviceName = appointment.clinic_services?.name || 'Appointment'
+  const businessName = appointment.businesses?.name || 'DriveIA'
+  const vehicleLabel = appointment.vehicles ? `${appointment.vehicles.year} ${appointment.vehicles.make} ${appointment.vehicles.model}` : null
+  const serviceName = appointment.services?.name || vehicleLabel || 'Appointment'
   const scheduledAt = new Date(appointment.scheduled_at).toLocaleString('en-US')
   const portalUrl = `${process.env.NEXT_PUBLIC_APP_URL || ''}/portal`
 
   const html =
     type === 'confirmation'
       ? buildAppointmentConfirmationEmail({
-          patientName: appointment.patients?.name || 'Patient',
+          customerName: appointment.customers?.name || 'Customer',
           businessName,
           serviceName,
           scheduledAt,
           portalUrl,
         })
       : buildAppointmentStatusEmail({
-          patientName: appointment.patients?.name || 'Patient',
+          customerName: appointment.customers?.name || 'Customer',
           businessName,
           serviceName,
           scheduledAt,
@@ -279,7 +313,7 @@ async function sendAppointmentEmailForTool(supabase: DbClient, appointmentId: st
       : `Appointment update - ${businessName}`
 
   return sendEmail({
-    to: patientEmail,
+    to: customerEmail,
     subject,
     html,
   })
@@ -290,11 +324,26 @@ export async function executeRealtimeToolCall(
   businessId: string,
   toolName: string,
   args: Record<string, unknown> = {},
-  opts: { patientSource?: Patient['source']; appointmentSource?: AppointmentSource } = {}
+  opts: { customerSource?: Customer['source']; appointmentSource?: AppointmentSource } = {}
 ) {
   switch (toolName) {
-    case 'list_clinic_services': {
-      return { services: await listActiveClinicServices(supabase, businessId) }
+    case 'search_vehicle_inventory': {
+      return {
+        vehicles: await searchVehicleInventory(supabase, businessId, {
+          query: typeof args.query === 'string' ? args.query : undefined,
+          make: typeof args.make === 'string' ? args.make : undefined,
+          bodyType: typeof args.bodyType === 'string' ? (args.bodyType as any) : undefined,
+          listingType: typeof args.listingType === 'string' ? (args.listingType as any) : undefined,
+          maxPrice: typeof args.maxPrice === 'number' ? args.maxPrice : undefined,
+          minYear: typeof args.minYear === 'number' ? args.minYear : undefined,
+        }),
+      }
+    }
+    case 'get_vehicle_details': {
+      return { vehicle: await getVehicleById(supabase, businessId, String(args.vehicleId)) }
+    }
+    case 'list_services': {
+      return { services: await listActiveServices(supabase, businessId) }
     }
     case 'get_available_slots': {
       return {
@@ -305,38 +354,41 @@ export async function executeRealtimeToolCall(
         }),
       }
     }
-    case 'find_or_create_patient': {
-      const patient = await findOrCreatePatient(supabase, businessId, {
+    case 'find_or_create_customer': {
+      const customer = await findOrCreateCustomer(supabase, businessId, {
         name: String(args.name || 'Unknown'),
         email: typeof args.email === 'string' ? args.email : null,
         phone: typeof args.phone === 'string' ? args.phone : null,
-        source: opts.patientSource ?? 'ai_call',
+        source: opts.customerSource ?? 'ai_call',
+        interestType: typeof args.interestType === 'string' ? (args.interestType as any) : undefined,
       })
-      return { patient }
+      return { customer }
     }
     case 'create_appointment': {
-      const patient =
-        typeof args.patientId === 'string'
+      const customer =
+        typeof args.customerId === 'string'
           ? null
-          : await findOrCreatePatient(supabase, businessId, {
-              name: String(args.patientName || 'Unknown'),
-              email: typeof args.patientEmail === 'string' ? args.patientEmail : null,
-              phone: typeof args.patientPhone === 'string' ? args.patientPhone : null,
-              source: opts.patientSource ?? 'ai_call',
+          : await findOrCreateCustomer(supabase, businessId, {
+              name: String(args.customerName || 'Unknown'),
+              email: typeof args.customerEmail === 'string' ? args.customerEmail : null,
+              phone: typeof args.customerPhone === 'string' ? args.customerPhone : null,
+              source: opts.customerSource ?? 'ai_call',
             })
 
       const appointment = await createAppointment(supabase, businessId, {
-        patientId: typeof args.patientId === 'string' ? args.patientId : patient?.id ?? null,
+        customerId: typeof args.customerId === 'string' ? args.customerId : customer?.id ?? null,
         agentId: typeof args.agentId === 'string' ? args.agentId : null,
         serviceId: typeof args.serviceId === 'string' ? args.serviceId : null,
+        vehicleId: typeof args.vehicleId === 'string' ? args.vehicleId : null,
+        appointmentType: typeof args.appointmentType === 'string' ? (args.appointmentType as any) : 'test_drive',
         scheduledAt: String(args.scheduledAt),
         source: (opts.appointmentSource ?? (typeof args.source === 'string' ? args.source : 'ai_call')) as AppointmentSource,
         notes: typeof args.notes === 'string' ? args.notes : null,
       })
-      if ((patient?.email || typeof args.patientEmail === 'string') && appointment.id) {
+      if ((customer?.email || typeof args.customerEmail === 'string') && appointment.id) {
         await sendAppointmentEmailForTool(supabase, appointment.id, 'confirmation')
       }
-      return { appointment, patient }
+      return { appointment, customer }
     }
     case 'confirm_appointment': {
       const appointment = await confirmAppointment(supabase, businessId, String(args.appointmentId))
@@ -357,7 +409,7 @@ export async function executeRealtimeToolCall(
     }
     case 'create_support_ticket': {
       const ticket = await createSupportTicket(supabase, businessId, {
-        patientId: typeof args.patientId === 'string' ? args.patientId : null,
+        customerId: typeof args.customerId === 'string' ? args.customerId : null,
         appointmentId: typeof args.appointmentId === 'string' ? args.appointmentId : null,
         subject: String(args.subject || 'Support request'),
         description: typeof args.description === 'string' ? args.description : null,
@@ -384,10 +436,10 @@ export async function executeRealtimeToolCall(
   }
 }
 
-export async function buildClinicRealtimeContext(supabase: DbClient, businessId: string) {
+export async function buildDealerRealtimeContext(supabase: DbClient, businessId: string) {
   const [business, services, faqs] = await Promise.all([
     getBusinessById(supabase, businessId),
-    listActiveClinicServices(supabase, businessId),
+    listActiveServices(supabase, businessId),
     listKnowledgeDocuments(supabase, businessId, true),
   ])
 
@@ -397,6 +449,6 @@ export async function buildClinicRealtimeContext(supabase: DbClient, businessId:
     business,
     services,
     faqs,
-    instructions: buildClinicAssistantInstructions({ business, services, faqs }),
+    instructions: buildDealerAssistantInstructions({ business, services, faqs }),
   }
 }

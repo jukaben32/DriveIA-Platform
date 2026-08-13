@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { MessageCircle, Power, QrCode, ServerCrash, ShieldCheck, Sparkles } from 'lucide-react'
 
 import type { AiAgent, WhatsappConnection } from '@/types'
-import { StatusBadge, SurfaceCard } from '@/components/clinic/shared'
+import { StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 
 const STATUS_LABEL: Record<WhatsappConnection['status'], string> = {
   connected: 'Connected',

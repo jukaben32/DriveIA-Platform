@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Loader2, MailCheck } from 'lucide-react'
-import { SectionEyebrow } from '@/components/clinic/shared'
+import { SectionEyebrow } from '@/components/dealer/shared'
 
 const PORTAL_BASE = 'http://localhost'
 const PORTAL_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/

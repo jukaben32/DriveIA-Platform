@@ -4,13 +4,14 @@ import { useState } from 'react'
 import type { Notification, NotificationCategory } from '@/types'
 import { createClient } from '@/lib/supabase/client'
 import { markNotificationRead, markAllNotificationsRead } from '@/services/notifications'
-import { SectionEyebrow, SectionHeading, SurfaceCard, StatusBadge } from '@/components/clinic/shared'
+import { SectionEyebrow, SectionHeading, SurfaceCard, StatusBadge } from '@/components/dealer/shared'
 
 const CATEGORY_TONE: Record<NotificationCategory, 'teal' | 'emerald' | 'blue' | 'rose' | 'slate'> = {
   appointment: 'teal',
   billing: 'emerald',
   widget: 'blue',
   support: 'rose',
+  inventory: 'blue',
   system: 'slate',
 }
 
