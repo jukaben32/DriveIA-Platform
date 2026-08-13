@@ -352,6 +352,13 @@ export interface Website {
   trustBadges: string[]
   featuredServiceIds: string[]
   featuredVehicleIds: string[]
+  socialYoutube: string | null
+  socialFacebook: string | null
+  socialInstagram: string | null
+  socialTiktok: string | null
+  socialLinkedin: string | null
+  socialPinterest: string | null
+  socialTwitter: string | null
   createdAt: string
   updatedAt: string
 }

@@ -23,6 +23,7 @@ import {
   Quote,
   Rocket,
   Save,
+  Share2,
   Sparkles,
   Trash2,
   TrendingUp,
@@ -31,6 +32,7 @@ import {
 import type { AiAgent, Vehicle, WebsiteContent, WebsiteFaq, WebsiteService, WebsiteHighlight, WebsiteTeamMember, WebsiteTestimonial } from '@/types'
 import { StatusBadge, SurfaceCard } from '@/components/dealer/shared'
 import { WebsiteTemplateRenderer } from './WebsiteTemplateRenderer'
+import { SOCIAL_PLATFORMS } from './socialLinks'
 
 const TEMPLATE_CHOICES = [
   { id: 'serenity', name: 'Serenity', tagline: 'Soft gradients and calm trust' },
@@ -454,6 +456,13 @@ export function WebsiteEditor({
         trustBadges: website.trustBadges.map((item) => item.trim()).filter(Boolean),
         featuredServiceIds: website.featuredServiceIds,
         featuredVehicleIds,
+        socialYoutube: textOrNull(website.socialYoutube ?? ''),
+        socialFacebook: textOrNull(website.socialFacebook ?? ''),
+        socialInstagram: textOrNull(website.socialInstagram ?? ''),
+        socialTiktok: textOrNull(website.socialTiktok ?? ''),
+        socialLinkedin: textOrNull(website.socialLinkedin ?? ''),
+        socialPinterest: textOrNull(website.socialPinterest ?? ''),
+        socialTwitter: textOrNull(website.socialTwitter ?? ''),
       },
       services: services.map((service, index) => ({
         id: service.id,
@@ -1162,6 +1171,29 @@ export function WebsiteEditor({
                   </div>
                 </div>
               ))}
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Social media" subtitle="Síguenos en nuestras redes sociales - shown as icons in the site footer." icon={Share2}>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {SOCIAL_PLATFORMS.map((platform) => {
+                const Icon = platform.icon
+                return (
+                  <Field key={platform.field} label={platform.label}>
+                    <div className="flex items-center gap-2">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--border-soft)] bg-[var(--panel-soft)] text-[var(--text-strong)]">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <input
+                        value={website[platform.field] ?? ''}
+                        onChange={(e) => patchWebsite({ [platform.field]: e.target.value || null })}
+                        placeholder={`https://${platform.label.toLowerCase()}.com/yourdealership`}
+                        className="input-field w-full"
+                      />
+                    </div>
+                  </Field>
+                )
+              })}
             </div>
           </SectionCard>
 

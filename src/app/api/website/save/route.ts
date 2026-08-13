@@ -73,6 +73,13 @@ export async function POST(request: Request) {
       trustBadges: parsed.data.trustBadges ?? [],
       featuredServiceIds: parsed.data.featuredServiceIds ?? [],
       featuredVehicleIds: parsed.data.featuredVehicleIds ?? [],
+      socialYoutube: parsed.data.socialYoutube ?? null,
+      socialFacebook: parsed.data.socialFacebook ?? null,
+      socialInstagram: parsed.data.socialInstagram ?? null,
+      socialTiktok: parsed.data.socialTiktok ?? null,
+      socialLinkedin: parsed.data.socialLinkedin ?? null,
+      socialPinterest: parsed.data.socialPinterest ?? null,
+      socialTwitter: parsed.data.socialTwitter ?? null,
     })
 
     const content = await getWebsiteContentForBusiness(supabase, business.id)

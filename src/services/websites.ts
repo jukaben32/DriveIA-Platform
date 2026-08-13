@@ -47,6 +47,13 @@ function toWebsite(row: any): Website {
     trustBadges: row.trust_badges ?? [],
     featuredServiceIds: row.featured_service_ids ?? [],
     featuredVehicleIds: row.featured_vehicle_ids ?? [],
+    socialYoutube: row.social_youtube ?? null,
+    socialFacebook: row.social_facebook ?? null,
+    socialInstagram: row.social_instagram ?? null,
+    socialTiktok: row.social_tiktok ?? null,
+    socialLinkedin: row.social_linkedin ?? null,
+    socialPinterest: row.social_pinterest ?? null,
+    socialTwitter: row.social_twitter ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -196,6 +203,13 @@ function buildWebsiteRow(input: WebsiteInput, businessId: string, current?: Webs
     trust_badges: input.trustBadges ?? current?.trustBadges ?? [],
     featured_service_ids: input.featuredServiceIds ?? current?.featuredServiceIds ?? [],
     featured_vehicle_ids: input.featuredVehicleIds ?? current?.featuredVehicleIds ?? [],
+    social_youtube: input.socialYoutube ?? current?.socialYoutube ?? null,
+    social_facebook: input.socialFacebook ?? current?.socialFacebook ?? null,
+    social_instagram: input.socialInstagram ?? current?.socialInstagram ?? null,
+    social_tiktok: input.socialTiktok ?? current?.socialTiktok ?? null,
+    social_linkedin: input.socialLinkedin ?? current?.socialLinkedin ?? null,
+    social_pinterest: input.socialPinterest ?? current?.socialPinterest ?? null,
+    social_twitter: input.socialTwitter ?? current?.socialTwitter ?? null,
   }
 }
 
@@ -322,6 +336,13 @@ export async function createOrUpdateWebsite(
     trustBadges?: string[]
     featuredServiceIds?: string[]
     featuredVehicleIds?: string[]
+    socialYoutube?: string | null
+    socialFacebook?: string | null
+    socialInstagram?: string | null
+    socialTiktok?: string | null
+    socialLinkedin?: string | null
+    socialPinterest?: string | null
+    socialTwitter?: string | null
   }
 ) {
   const current = await getWebsiteRowByBusinessId(supabase, businessId)
@@ -357,6 +378,13 @@ export async function createOrUpdateWebsite(
       trustBadges: input.trustBadges ?? current?.trustBadges ?? [],
       featuredServiceIds: input.featuredServiceIds ?? current?.featuredServiceIds ?? [],
       featuredVehicleIds: input.featuredVehicleIds ?? current?.featuredVehicleIds ?? [],
+      socialYoutube: input.socialYoutube ?? current?.socialYoutube ?? null,
+      socialFacebook: input.socialFacebook ?? current?.socialFacebook ?? null,
+      socialInstagram: input.socialInstagram ?? current?.socialInstagram ?? null,
+      socialTiktok: input.socialTiktok ?? current?.socialTiktok ?? null,
+      socialLinkedin: input.socialLinkedin ?? current?.socialLinkedin ?? null,
+      socialPinterest: input.socialPinterest ?? current?.socialPinterest ?? null,
+      socialTwitter: input.socialTwitter ?? current?.socialTwitter ?? null,
     },
     current
   )
@@ -419,6 +447,13 @@ export async function updateWebsite(supabase: DbClient, businessId: string, webs
     trustBadges: patch.trustBadges ?? current.trustBadges,
     featuredServiceIds: patch.featuredServiceIds ?? current.featuredServiceIds,
     featuredVehicleIds: patch.featuredVehicleIds ?? current.featuredVehicleIds,
+    socialYoutube: patch.socialYoutube ?? current.socialYoutube,
+    socialFacebook: patch.socialFacebook ?? current.socialFacebook,
+    socialInstagram: patch.socialInstagram ?? current.socialInstagram,
+    socialTiktok: patch.socialTiktok ?? current.socialTiktok,
+    socialLinkedin: patch.socialLinkedin ?? current.socialLinkedin,
+    socialPinterest: patch.socialPinterest ?? current.socialPinterest,
+    socialTwitter: patch.socialTwitter ?? current.socialTwitter,
   }
 
   return createOrUpdateWebsite(supabase, businessId, merged)

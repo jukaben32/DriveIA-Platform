@@ -222,6 +222,13 @@ export const websiteSchema = z.object({
   trustBadges: z.array(z.string()).optional(),
   featuredServiceIds: z.array(z.string().uuid()).optional(),
   featuredVehicleIds: z.array(z.string().uuid()).optional(),
+  socialYoutube: z.string().url().optional().nullable(),
+  socialFacebook: z.string().url().optional().nullable(),
+  socialInstagram: z.string().url().optional().nullable(),
+  socialTiktok: z.string().url().optional().nullable(),
+  socialLinkedin: z.string().url().optional().nullable(),
+  socialPinterest: z.string().url().optional().nullable(),
+  socialTwitter: z.string().url().optional().nullable(),
 })
 
 export const websiteServiceSchema = z.object({

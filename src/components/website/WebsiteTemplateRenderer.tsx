@@ -23,6 +23,7 @@ import type { ReactNode } from 'react'
 
 import type { WebsiteContent } from '@/types'
 import { SurfaceCard } from '@/components/dealer/shared'
+import { configuredSocialLinks } from './socialLinks'
 
 const TEMPLATE_STYLES: Record<
   string,
@@ -200,6 +201,7 @@ export function WebsiteTemplateRenderer({
   const fontFamily = FONT_STACKS[fontKey] ?? FONT_STACKS.inter
   const fontLink = FONT_LINKS[fontKey] ?? FONT_LINKS.inter
   const mapEmbedUrl = normalizeMapEmbedUrl(website.contactMapsUrl)
+  const socialLinks = configuredSocialLinks(website)
   const heroTitle = website.heroHeadline || website.siteTitle || businessName
   const heroBody = website.heroSubheadline || website.siteDescription
   const phone = website.contactPhone || businessPhone || ''
@@ -661,9 +663,31 @@ export function WebsiteTemplateRenderer({
       </main>
 
       <footer className="border-t px-4 py-8 sm:px-6 lg:px-8" style={{ borderColor: style.border }}>
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 text-center text-xs sm:text-sm">
-          <p className="font-semibold">{website.footerTagline || 'Your trusted mobility partner.'}</p>
-          <p style={{ color: style.subtext }}>{website.footerCopyright || `Copyright ${new Date().getFullYear()} ${businessName}`}</p>
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 text-center text-xs sm:text-sm">
+          {socialLinks.length > 0 ? (
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {socialLinks.map((platform) => {
+                const Icon = platform.icon
+                return (
+                  <a
+                    key={platform.field}
+                    href={platform.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={platform.label}
+                    className="grid h-10 w-10 place-items-center rounded-full text-white transition hover:-translate-y-0.5"
+                    style={{ background: `linear-gradient(135deg, ${website.primaryColor}, ${website.secondaryColor})` }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                )
+              })}
+            </div>
+          ) : null}
+          <div className="flex flex-col gap-2">
+            <p className="font-semibold">{website.footerTagline || 'Your trusted mobility partner.'}</p>
+            <p style={{ color: style.subtext }}>{website.footerCopyright || `Copyright ${new Date().getFullYear()} ${businessName}`}</p>
+          </div>
         </div>
       </footer>
     </div>
