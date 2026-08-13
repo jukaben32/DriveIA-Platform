@@ -29,7 +29,8 @@ function extractInboundText(data: Record<string, unknown>): string | null {
   return null
 }
 
-export async function POST(request: Request, { params }: { params: { businessId: string } }) {
+export async function POST(request: Request, props: { params: Promise<{ businessId: string }> }) {
+  const params = await props.params;
   const payload = await request.json().catch(() => null)
   if (!payload) {
     return json({ ok: true })
