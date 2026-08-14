@@ -1175,3 +1175,35 @@ select
   payment_chain_id,
   payment_currency
 from businesses;
+
+-- 18. BUSINESS STRIPE ACCOUNTS
+-- Lets a business collect its own appointment/deposit payments via Stripe
+-- (as an alternative to the existing wallet-based flow), separate from this
+-- SaaS's own billing. secret_key_encrypted is AES-256-GCM ciphertext (see
+-- src/lib/cryptoSecrets.ts) - the app must never return it to the browser;
+-- only /api/business/stripe (server-side, service-role client) reads or
+-- writes this table.
+create table if not exists business_stripe_accounts (
+  business_id uuid primary key references businesses(id) on delete cascade,
+  publishable_key text,
+  secret_key_encrypted text,
+  connected_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists update_business_stripe_accounts_updated_at on business_stripe_accounts;
+create trigger update_business_stripe_accounts_updated_at
+before update on business_stripe_accounts
+for each row execute function update_updated_at_column();
+
+alter table business_stripe_accounts enable row level security;
+
+-- No client-side policy grants insert/update/delete: only the service-role
+-- admin client (used exclusively by /api/business/stripe, which itself
+-- requires an authenticated owner/admin) ever writes this table. Business
+-- members can still read their own row directly for a "connected" status
+-- check if useful later - the ciphertext is opaque to them either way.
+drop policy if exists "stripe account read by business members" on business_stripe_accounts;
+create policy "stripe account read by business members"
+  on business_stripe_accounts for select using (has_business_access(business_id));

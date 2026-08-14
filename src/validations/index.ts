@@ -355,6 +355,12 @@ export const realtimeConversationEndSchema = z.object({
   appointmentId: z.string().uuid().optional(),
 })
 
+export const stripeAccountSchema = z.object({
+  publishableKey: z.string().regex(/^pk_(live|test)_/, 'Must start with pk_live_ or pk_test_'),
+  secretKey: z.string().regex(/^sk_(live|test)_/, 'Must start with sk_live_ or sk_test_'),
+})
+export type StripeAccountInput = z.infer<typeof stripeAccountSchema>
+
 export const websiteSubscriberSchema = z.object({
   email: z.string().email(),
   name: z.string().max(120).optional().nullable(),

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getBusinessForUser, getBusinessAvailability, getClosedDates } from '@/services/business'
+import { getStripeAccountStatus } from '@/services/stripeAccounts'
 import { SettingsManager } from '@/components/dealer/SettingsManager'
 
 export default async function SettingsPage() {
@@ -13,10 +14,18 @@ export default async function SettingsPage() {
   const business = await getBusinessForUser(supabase, user.id)
   if (!business) redirect('/signup')
 
-  const [availability, closedDates] = await Promise.all([
+  const [availability, closedDates, stripeStatus] = await Promise.all([
     getBusinessAvailability(supabase, business.id),
     getClosedDates(supabase, business.id),
+    getStripeAccountStatus(supabase, business.id),
   ])
 
-  return <SettingsManager business={business} initialAvailability={availability} initialClosedDates={closedDates} />
+  return (
+    <SettingsManager
+      business={business}
+      initialAvailability={availability}
+      initialClosedDates={closedDates}
+      initialStripeStatus={stripeStatus}
+    />
+  )
 }
