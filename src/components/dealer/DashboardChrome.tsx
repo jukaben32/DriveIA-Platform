@@ -10,6 +10,7 @@ import {
   CalendarDays,
   CalendarRange,
   CarFront,
+  CreditCard,
   FileText,
   Globe2,
   LayoutDashboard,
@@ -73,6 +74,7 @@ const navGroups: readonly NavGroup[] = [
     label: 'ACCOUNT',
     items: [
       { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+      { href: '/dashboard/billing', label: 'Plan', icon: CreditCard },
       { href: '/dashboard/settings', label: 'Settings', icon: Settings2 },
     ],
   },
